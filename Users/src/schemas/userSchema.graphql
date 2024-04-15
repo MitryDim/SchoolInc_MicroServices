@@ -6,7 +6,8 @@ type User {
   id: ID
   name: String
   email: String
-  age: Int
+  age: Int,
+  role: [String]
 }
 type Mutation {
   createUser(user: UserInput): LoginResponse
@@ -20,6 +21,7 @@ input UserInput {
   email: String
   age: Int,
   password: String
+  role: [String]
 }
 type LoginResponse {
   id: ID!
