@@ -1,17 +1,5 @@
 import { gql, useQuery, useMutation } from "@apollo/client";
-
-const GET_ALL_USERS = gql`
-  query GetAllUsers {
-    getAllUsers {
-      id
-      firstname
-      lastname
-      email
-      role
-      spe
-    }
-  }
-`;
+import { GET_ALL_USERS } from "../api/graphql/queries";
 
 const Admin = () => {
   const {

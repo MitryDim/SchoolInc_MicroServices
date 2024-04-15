@@ -9,7 +9,7 @@ const userResolver = {
       if (!context.userIsAuthorized) {
         throw new Error("Unauthorized");
       }
-     
+
       const { name, email, age, limit = 10, skip = 0 } = args;
 
       console.log("search ", name, email, age, limit, skip);
