@@ -6,7 +6,6 @@ const userResolver = {
       return Users.findOne({ name: name });
     },
     getAllUsers: async (_, args,context) => {
-       console.log("test", args, context);
       if (!context.userIsAuthorized) {
         throw new Error("Unauthorized");
       }

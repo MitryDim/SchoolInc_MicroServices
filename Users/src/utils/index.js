@@ -1,10 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const {
-  JWT_SECRET_KEY,
-} = require("../config");
-
-
+const { JWT_SECRET_KEY } = require("../config");
 
 module.exports.GenerateSalt = async () => {
   return await bcrypt.genSalt();
@@ -31,13 +27,12 @@ module.exports.GenerateSignature = async (payload) => {
   }
 };
 
-module.exports.ValidateSignature = async (req) => {
+module.exports.ValidateSignature = async (signature) => {
   try {
-    const signature = req.get("Authorization");
-    console.log(signature);
-    const payload = await jwt.verify(signature.split(" ")[1], JWT_SECRET_KEY);
-    return payload
-    return true;
+    if (!signature) return false;
+
+    const payload = await jwt.verify(signature?.split(" ")[1], JWT_SECRET_KEY);
+    return payload;
   } catch (error) {
     console.log(error);
     return false;
