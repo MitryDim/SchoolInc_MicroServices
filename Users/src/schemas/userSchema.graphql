@@ -1,0 +1,28 @@
+type Query {
+  searchByName(name: String): [User]
+  getAllUsers(name: String, email: String, age: Int, limit:Int, skip:Int): [User]
+}
+type User {
+  id: ID
+  name: String
+  email: String
+  age: Int
+}
+type Mutation {
+  createUser(user: UserInput): LoginResponse
+  createUsers(users: [UserInput]): String
+  updateUser(id: String!, user: UserInput!): User
+  deleteUser(id: String!): String
+}
+
+input UserInput {
+  name: String
+  email: String
+  age: Int,
+  password: String
+}
+type LoginResponse {
+  id: ID!
+  name: String!
+  token: String
+}
