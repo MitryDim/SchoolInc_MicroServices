@@ -104,9 +104,12 @@ const userResolver = {
       }
       const { id, user } = args;
       const update = {
-        ...(user.name && { name: user.name }),
+        ...(user.firstname && { firstname: user.firstname }),
+        ...(user.lastname && { lastname: user.lastname }),
+        ...(user.role && { role: user.role }),
+        ...(user.password && { password: user.password }),
+        ...(user.speciality && { speciality: user.speciality }),
         ...(user.email && { email: user.email }),
-        ...(user.age && { age: user.age }),
       };
 
       const result = await Users.findByIdAndUpdate(
