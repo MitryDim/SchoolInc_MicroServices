@@ -1,5 +1,7 @@
 import React from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import * as CIIcons from "react-icons/ci";
+
 import { GET_ALL_USERS } from "../api/graphql/queries";
 
 const Admin = () => {
@@ -9,15 +11,7 @@ const Admin = () => {
     error: userError,
   } = useQuery(GET_ALL_USERS);
 
-  if (userLoading) return <p>Loading...</p>;
-  if (userError) return <p>Error :( {userError.message}</p>;
-
-  const users = userData.getAllUsers;
-
-  console.log(userLoading);
-  console.log(userError);
-  console.log(userData);
-  console.log(users);
+  const users = userData?.getAllUsers || [];
 
   return (
     <div className="w-full h-full p-8">
@@ -28,60 +22,76 @@ const Admin = () => {
         <div className="bg-white p-6 rounded shadow-md">
           <h2 className="text-xl font-semibold mb-4">Users Lists</h2>
           <div className="overflow-x-auto">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>
-                    <input type="checkbox" className="checkbox" />
-                  </th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Speciality</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user, index) => (
-                  <tr key={index}>
+            {userLoading ? (
+              <p>Loading...</p>
+            ) : userError ? (
+              <p>Error :( {userError.message}</p>
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
                     <th>
                       <input type="checkbox" className="checkbox" />
                     </th>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12">
-                            <img
-                              src={`https://robohash.org/${user.firstname}.png`}
-                              alt="Avatar Tailwind CSS Component"
-                            />
-                          </div>
-                        </div>
-                        <div className="font-bold">
-                          {user.firstname} {user.lastname}
-                        </div>
-                      </div>
-                    </td>
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                    <td>{user.spe}</td>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Speciality</th>
+                    <th></th>
                     <th>
-                      <button className="btn btn-ghost btn-xs">Details</button>
+                      <button>
+                        <CIIcons.CiTrash
+                          size={25}
+                          className="hover:text-red-600"
+                        />
+                      </button>
                     </th>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Speciality</th>
-                  <th></th>
-                </tr>
-              </tfoot>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((user, index) => (
+                    <tr key={index}>
+                      <th>
+                        <input type="checkbox" className="checkbox" />
+                      </th>
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <div className="avatar">
+                            <div className="mask mask-squircle w-12 h-12">
+                              <img
+                                src={`https://robohash.org/${user.firstname}.png`}
+                                alt="Avatar Tailwind CSS Component"
+                              />
+                            </div>
+                          </div>
+                          <div className="font-bold">
+                            {user.firstname} {user.lastname}
+                          </div>
+                        </div>
+                      </td>
+                      <td>{user.email}</td>
+                      <td>{user.role}</td>
+                      <td>{user.speciality}</td>
+                      <th>
+                        <button className="btn btn-ghost btn-xs">
+                          Details
+                        </button>
+                      </th>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Speciality</th>
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            )}
           </div>
         </div>
         <div className="bg-white p-6 rounded shadow-md">
