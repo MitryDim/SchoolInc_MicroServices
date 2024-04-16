@@ -28,15 +28,16 @@ type Mutation {
 }
 
 input UserInput {
-  name: String
+  firstname: String,
+  lastname: String,
   email: String
-  age: Int
   password: String
   role: [String]
   speciality: String
 }
 type LoginResponse {
   id: ID!
-  name: String!
+  firstname: String!
+  lastname: String!
   token: String
 }

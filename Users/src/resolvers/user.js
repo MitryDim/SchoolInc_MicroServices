@@ -10,21 +10,16 @@ const userResolver = {
       //   throw new Error("Unauthorized");
       // }
 
-      const { name, email, age, limit = 10, skip = 0 } = args;
+      const { firstname,lastname, email, age, limit = 10, skip = 0 } = args;
 
-      console.log("search ", name, email, age, limit, skip);
       let query = [];
 
-      if (name) {
-        query.push({ name: name });
+      if (firstname) {
+        query.push({ firstname: firstname });
       }
 
       if (email) {
         query.push({ email: { $regex: email } });
-      }
-
-      if (age) {
-        query.push({ age: { $gte: age } });
       }
 
       if (query.length === 0) {
@@ -37,20 +32,61 @@ const userResolver = {
     
   },
   Mutation: {
+      login: async (_, { email, password }) => {
+        // Trouver l'utilisateur par email
+        const user = await Users.findOne({ email });
+
+        if (!user) {
+          throw new Error("No such user found");
+        }
+
+        // Vérifier le mot de passe
+        const valid = utils.ValidatePassword(
+          password,
+          user.password,
+          user.salt
+        );
+
+        if (!valid) {
+          throw new Error("Invalid password");
+        }
+
+        // Générer un token JWT
+        const token = utils.GenerateSignature({
+          id: user._id,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          role: user.role,
+          speciality: user.speciality,
+          email: user.email,
+        });
+
+        // Retourner l'utilisateur et le token
+        return {
+          token,
+          user,
+        };
+      },
     createUser: async (_, args) => {
       try {
-        console.log("create user");
         const user = new Users(args.user);
         const savedUser = await user.save();
 
         const token = utils.GenerateSignature({
           id: savedUser._id,
-          name: savedUser.name,
+          firstname: savedUser.firstname,
+          lastname: savedUser.lastname,
+          role: savedUser.role,
+          speciality: savedUser.speciality,
           email: savedUser.email,
         });
         savedUser.token = token;
-        console.log("saved user", savedUser);
-        return savedUser;
+
+        // Destructure the properties you want from savedUser
+        const { _id,firstname, lastname, role, speciality, email } = savedUser;
+
+        // Return a new object with only the properties you want
+        return { id: _id,firstname, lastname, role, speciality, email };
       } catch (err) {
         console.error(err);
         throw err;
