@@ -1,6 +1,6 @@
-type Grade {
+type Grade @key(fields: "id"){
   id: ID!
-  course: String!
+  course: ID!
   grade: Float!
   user: User!
 }
@@ -11,7 +11,7 @@ type Query {
 }
 
 type Mutation {
-  createGrade(course: String!, grade: Float!, userId: ID!): Grade
+  createGrade(course: ID!, grade: Float!, userId: ID!): Grade
   updateGrade(id: ID!, course: String, grade: Float): Grade
   deleteGrade(id: ID!): Grade
 }
