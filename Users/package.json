@@ -5,15 +5,18 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=dev nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/server": "^4.10.2",
+    "@apollo/server": "^4.10.3",
+    "@apollo/subgraph": "^2.7.2",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
+    "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.1"
   }

@@ -1,15 +1,16 @@
-const Users = require("../database/models/user");
+
 const utils = require('../utils')
+
 const userResolver = {
   Query: {
     searchByName: ({ name }) => {
       return Users.findOne({ name: name });
     },
-    getAllUsers: async (_, args, context) => {
+    getAllUsers: async (_, args,context) => {
       if (!context.userIsAuthorized) {
         throw new Error("Unauthorized");
       }
-
+     
       const { name, email, age, limit = 10, skip = 0 } = args;
 
       console.log("search ", name, email, age, limit, skip);
@@ -34,22 +35,17 @@ const userResolver = {
         return await Users.find({ $or: query }).skip(skip).limit(limit);
       }
     },
-    
   },
   Mutation: {
     createUser: async (_, args) => {
       try {
-        console.log("create user");
+        console.log("create user")
         const user = new Users(args.user);
         const savedUser = await user.save();
 
-        const token = utils.GenerateSignature({
-          id: savedUser._id,
-          name: savedUser.name,
-          email: savedUser.email,
-        });
-        savedUser.token = token;
-        console.log("saved user", savedUser);
+        const token = utils.GenerateSignature({id: savedUser._id, name: savedUser.name, email: savedUser.email });
+        savedUser.token = token;       
+         console.log("saved user", savedUser);
         return savedUser;
       } catch (err) {
         console.error(err);
@@ -93,11 +89,6 @@ const userResolver = {
         throw new Error(`No user found with id: ${id}`);
       }
       return `User with id: ${id} was deleted successfully`;
-    },
-  },
-  User: {
-    __resolveReference(user) {
-      return Users.findById(user.id);
     },
   },
 };
