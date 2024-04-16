@@ -61,11 +61,9 @@ const userResolver = {
           email: user.email,
         });
 
-        // Retourner l'utilisateur et le token
-        return {
-          token,
-          user,
-        };
+        
+        const { _id, firstname, lastname, role, speciality } = user;
+        return { id: _id, firstname, lastname, role, speciality, email: user?.email, token };
       },
     createUser: async (_, args) => {
       try {
@@ -86,7 +84,7 @@ const userResolver = {
         const { _id,firstname, lastname, role, speciality, email } = savedUser;
 
         // Return a new object with only the properties you want
-        return { id: _id,firstname, lastname, role, speciality, email };
+        return { id: _id,firstname, lastname, role, speciality, email,token };
       } catch (err) {
         console.error(err);
         throw err;
@@ -106,9 +104,12 @@ const userResolver = {
       }
       const { id, user } = args;
       const update = {
-        ...(user.name && { name: user.name }),
+        ...(user.firstname && { firstname: user.firstname }),
+        ...(user.lastname && { lastname: user.lastname }),
+        ...(user.role && { role: user.role }),
+        ...(user.password && { password: user.password }),
+        ...(user.speciality && { speciality: user.speciality }),
         ...(user.email && { email: user.email }),
-        ...(user.age && { age: user.age }),
       };
 
       const result = await Users.findByIdAndUpdate(

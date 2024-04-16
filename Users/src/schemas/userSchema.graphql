@@ -23,6 +23,7 @@ type Query {
 type Mutation {
   createUser(user: UserInput): LoginResponse
   createUsers(users: [UserInput]): String
+  login(email: String!, password: String!): LoginResponse
   updateUser(id: String!, user: UserInput!): User
   deleteUser(id: String!): String
 }
@@ -35,6 +36,7 @@ input UserInput {
   role: [String]
   speciality: String
 }
+
 type LoginResponse {
   id: ID!
   firstname: String!
