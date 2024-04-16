@@ -1,3 +1,4 @@
+import React from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { GET_ALL_USERS } from "../api/graphql/queries";
 
@@ -12,6 +13,11 @@ const Admin = () => {
   if (userError) return <p>Error :( {userError.message}</p>;
 
   const users = userData.getAllUsers;
+
+  console.log(userLoading);
+  console.log(userError);
+  console.log(userData);
+  console.log(users);
 
   return (
     <div className="w-full h-full p-8">
