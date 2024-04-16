@@ -61,11 +61,9 @@ const userResolver = {
           email: user.email,
         });
 
-        // Retourner l'utilisateur et le token
-        return {
-          token,
-          user,
-        };
+        
+        const { _id, firstname, lastname, role, speciality } = user;
+        return { id: _id, firstname, lastname, role, speciality, email: user?.email, token };
       },
     createUser: async (_, args) => {
       try {
@@ -86,7 +84,7 @@ const userResolver = {
         const { _id,firstname, lastname, role, speciality, email } = savedUser;
 
         // Return a new object with only the properties you want
-        return { id: _id,firstname, lastname, role, speciality, email };
+        return { id: _id,firstname, lastname, role, speciality, email,token };
       } catch (err) {
         console.error(err);
         throw err;
