@@ -6,9 +6,9 @@ const userResolver = {
       return Users.findOne({ name: name });
     },
     getAllUsers: async (_, args, context) => {
-      if (!context.userIsAuthorized) {
-        throw new Error("Unauthorized");
-      }
+      // if (!context.userIsAuthorized) {
+      //   throw new Error("Unauthorized");
+      // }
 
       const { name, email, age, limit = 10, skip = 0 } = args;
 
