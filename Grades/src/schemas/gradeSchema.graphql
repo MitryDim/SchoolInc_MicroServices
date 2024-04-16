@@ -1,0 +1,17 @@
+type Grade {
+  id: ID!
+  course: String!
+  grade: Float!
+  user: User!
+}
+
+type Query {
+  grade(id: ID!): Grade
+  grades(course: String): [Grade]
+}
+
+type Mutation {
+  createGrade(course: String!, grade: Float!, userId: ID!): Grade
+  updateGrade(id: ID!, course: String, grade: Float): Grade
+  deleteGrade(id: ID!): Grade
+}

@@ -1,14 +1,25 @@
+type User @key(fields: "id") {
+  id: ID
+  firstname: String
+  lastname: String
+  email: String
+  role: [String]
+  speciality: String
+}
+
 type Query {
   searchByName(name: String): [User]
-  getAllUsers(name: String, email: String, age: Int, limit:Int, skip:Int): [User]
+  getAllUsers(
+    firstname: String
+    lastname: String
+    email: String
+    speciality: String
+    role: [String]
+    limit: Int
+    skip: Int
+  ): [User]
 }
-type User {
-  id: ID
-  name: String
-  email: String
-  age: Int,
-  role: [String]
-}
+
 type Mutation {
   createUser(user: UserInput): LoginResponse
   createUsers(users: [UserInput]): String
@@ -19,9 +30,10 @@ type Mutation {
 input UserInput {
   name: String
   email: String
-  age: Int,
+  age: Int
   password: String
   role: [String]
+  speciality: String
 }
 type LoginResponse {
   id: ID!
