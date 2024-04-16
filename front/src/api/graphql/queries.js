@@ -10,48 +10,61 @@ export const GET_ALL_USERS = gql`
       lastname
       email
       role
-      spe
-      password
+      speciality
     }
   }
 `;
 
-// export const CREATE_USER = gql`
-//   mutation CreateUser($username: String!, $email: String!, $age: Int!) {
-//     createUser(input: { username: $username, email: $email, age: $age }) {
-//       id
-//       username
-//       email
-//       age
-//       createdAt
-//     }
-//   }
-// `;
+export const CREATE_USER = gql`
+  mutation CreateUser(
+    $firstname: String!
+    $lastname: String!
+    $email: String!
+    $role: String!
+    $speciality: String!
+  ) {
+    createUser(
+      input: {
+        firstname: $firstname
+        lastname: $lastname
+        email: $email
+        role: $role
+        speciality: $speciality
+      }
+    ) {
+      firstname
+      lastname
+      email
+      role
+      speciality
+    }
+  }
+`;
 
-// export const UPDATE_USER = gql`
-//   mutation UpdateUser(
-//     $id: ID!
-//     $username: String!
-//     $email: String!
-//     $age: Int!
-//   ) {
-//     updateUser(
-//       id: $id
-//       input: { username: $username, email: $email, age: $age }
-//     ) {
-//       id
-//       username
-//       email
-//       age
-//       createdAt
-//     }
-//   }
-// `;
+export const UPDATE_USER = gql`
+  mutation UpdateUser(
+    $id: ID!
+    $username: String!
+    $email: String!
+    $age: Int!
+  ) {
+    updateUser(
+      id: $id
+      input: { username: $username, email: $email, age: $age }
+    ) {
+      id
+      username
+      email
+      age
+      createdAt
+    }
+  }
+`;
 
-// export const DELETE_USER = gql`
-//   mutation DeleteUser($id: ID!) {
-//     deleteUser(id: $id) {
-//       id
-//     }
-//   }
-// `;
+export const DELETE_USER = gql`
+  mutation DeleteUser($id: ID!) {
+    deleteUser(id: $id) {
+      id
+    }
+  }
+`;
