@@ -2,7 +2,7 @@ import React from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import * as CIIcons from "react-icons/ci";
 
-import { GET_ALL_USERS } from "../api/graphql/queries";
+import { GET_ALL_USERS } from "../api/graphql/user-queries";
 
 const Admin = () => {
   const {
@@ -33,16 +33,16 @@ const Admin = () => {
                     <th>
                       <input type="checkbox" className="checkbox" />
                     </th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Speciality</th>
+                    <th className="text-[#673AB7]">Name</th>
+                    <th className="text-[#673AB7]">Email</th>
+                    <th className="text-[#673AB7]">Role</th>
+                    <th className="text-[#673AB7]">Speciality</th>
                     <th></th>
                     <th>
-                      <button>
+                      <button className="   ">
                         <CIIcons.CiTrash
-                          size={25}
-                          className="hover:text-red-600"
+                          size={20}
+                          className="text-[#673AB7] hover:text-red-600"
                         />
                       </button>
                     </th>
@@ -64,14 +64,14 @@ const Admin = () => {
                               />
                             </div>
                           </div>
-                          <div className="font-bold">
+                          <div className="font-bold text-[#673AB7]">
                             {user.firstname} {user.lastname}
                           </div>
                         </div>
                       </td>
-                      <td>{user.email}</td>
-                      <td>{user.role}</td>
-                      <td>{user.speciality}</td>
+                      <td className="text-[#673AB7]">{user.email}</td>
+                      <td className="text-[#673AB7]">{user.role}</td>
+                      <td className="text-[#673AB7]">{user.speciality}</td>
                       <th>
                         <button className="btn btn-ghost btn-xs">
                           Details
@@ -83,10 +83,10 @@ const Admin = () => {
                 <tfoot>
                   <tr>
                     <th></th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Speciality</th>
+                    <th className="text-[#673AB7]">Name</th>
+                    <th className="text-[#673AB7]">Email</th>
+                    <th className="text-[#673AB7]">Role</th>
+                    <th className="text-[#673AB7]">Speciality</th>
                     <th></th>
                   </tr>
                 </tfoot>
