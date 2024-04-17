@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import * as CIIcons from "react-icons/ci";
 
-import { GET_ALL_USERS } from "../api/graphql/user-queries";
+import { GET_ALL_USERS, DELETE_USER } from "../api/graphql/user-queries";
 
 const Admin = () => {
   const {
@@ -10,8 +10,49 @@ const Admin = () => {
     loading: userLoading,
     error: userError,
   } = useQuery(GET_ALL_USERS);
+  const [deleteUser] = useMutation(DELETE_USER, {
+    refetchQueries: [{ query: GET_ALL_USERS }],
+  });
 
   const users = userData?.getAllUsers || [];
+
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const handleSelectAll = (event) => {
+    const isChecked = event.target.checked;
+    setSelectAll(isChecked);
+    setSelectedUsers(isChecked ? users.map((user) => user.id) : []);
+  };
+
+  const handleCheckboxChange = (userId) => {
+    if (selectedUsers.includes(userId)) {
+      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+    } else {
+      setSelectedUsers([...selectedUsers, userId]);
+    }
+  };
+
+  useEffect(() => {
+    // Vérifier si tous les utilisateurs sont sélectionnés
+    const allSelected = selectedUsers.length === users.length;
+    setSelectAll(allSelected);
+  }, [selectedUsers, users]);
+
+  const handleDeleteModalOpen = () => {
+    document.getElementById("deleteModal").showModal();
+  };
+
+  const handleConfirmDelete = async () => {
+    console.log("Suppression des utilisateurs:", selectedUsers);
+    try {
+      await deleteUser({ variables: { userIds: selectedUsers } });
+      console.log("Utilisateurs supprimés avec succès", selectedUsers);
+    } catch (error) {
+      console.error("Erreur lors de la suppression des utilisateurs:", error);
+    }
+    document.getElementById("deleteModal").close();
+  };
 
   return (
     <div className="w-full h-full p-8">
@@ -31,20 +72,26 @@ const Admin = () => {
                 <thead>
                   <tr>
                     <th>
-                      <input type="checkbox" className="checkbox" />
+                      <input
+                        type="checkbox"
+                        className="checkbox border-[#673AB7] checked:border-[#673AB7] [--chkbg:#673AB7] [--chkfg:white]"
+                        onChange={handleSelectAll}
+                        checked={selectAll}
+                      />
                     </th>
                     <th className="text-[#673AB7]">Name</th>
                     <th className="text-[#673AB7]">Email</th>
                     <th className="text-[#673AB7]">Role</th>
                     <th className="text-[#673AB7]">Speciality</th>
-                    <th></th>
                     <th>
-                      <button className="   ">
-                        <CIIcons.CiTrash
-                          size={20}
-                          className="text-[#673AB7] hover:text-red-600"
-                        />
-                      </button>
+                      {selectedUsers.length > 0 && (
+                        <button onClick={handleDeleteModalOpen}>
+                          <CIIcons.CiTrash
+                            size={20}
+                            className="text-[#673AB7] hover:text-red-600"
+                          />
+                        </button>
+                      )}
                     </th>
                   </tr>
                 </thead>
@@ -52,7 +99,12 @@ const Admin = () => {
                   {users.map((user, index) => (
                     <tr key={index}>
                       <th>
-                        <input type="checkbox" className="checkbox" />
+                        <input
+                          type="checkbox"
+                          className="checkbox border-[#673AB7] checked:border-[#673AB7] [--chkbg:#673AB7] [--chkfg:white]"
+                          onChange={() => handleCheckboxChange(user.id)}
+                          checked={selectedUsers.includes(user.id)}
+                        />
                       </th>
                       <td>
                         <div className="flex items-center gap-3">
@@ -94,23 +146,28 @@ const Admin = () => {
             )}
           </div>
         </div>
-        <div className="bg-white p-6 rounded shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-          <ul className="divide-y divide-gray-300">
-            <li className="py-2">
-              <p className="text-gray-700">New user registered</p>
-              <p className="text-sm text-gray-500">2 hours ago</p>
-            </li>
-            <li className="py-2">
-              <p className="text-gray-700">Order received</p>
-              <p className="text-sm text-gray-500">1 day ago</p>
-            </li>
-            <li className="py-2">
-              <p className="text-gray-700">Product updated</p>
-              <p className="text-sm text-gray-500">3 days ago</p>
-            </li>
-          </ul>
-        </div>
+        <dialog id="deleteModal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Confirmation de suppression</h3>
+            <p className="py-4">
+              Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn mr-2 border-red-600 text-red-600"
+                onClick={handleConfirmDelete}
+              >
+                Oui, supprimer
+              </button>
+              <button
+                className="btn"
+                onClick={() => document.getElementById("deleteModal").close()}
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </dialog>
       </div>
     </div>
   );

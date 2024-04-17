@@ -1,0 +1,17 @@
+     {/* <div className="bg-white p-6 rounded shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+          <ul className="divide-y divide-gray-300">
+            <li className="py-2">
+              <p className="text-gray-700">New user registered</p>
+              <p className="text-sm text-gray-500">2 hours ago</p>
+            </li>
+            <li className="py-2">
+              <p className="text-gray-700">Order received</p>
+              <p className="text-sm text-gray-500">1 day ago</p>
+            </li>
+            <li className="py-2">
+              <p className="text-gray-700">Product updated</p>
+              <p className="text-sm text-gray-500">3 days ago</p>
+            </li>
+          </ul>
+        </div> */}
