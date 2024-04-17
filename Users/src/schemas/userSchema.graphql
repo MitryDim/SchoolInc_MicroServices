@@ -1,3 +1,17 @@
+input UserId {
+  id: ID!
+}
+
+input UserInput {
+  firstname: String
+  lastname: String
+  email: String
+  password: String
+  role: [String]
+  speciality: String
+}
+
+
 type User @key(fields: "id") {
   id: ID
   firstname: String
@@ -25,17 +39,10 @@ type Mutation {
   createUsers(users: [UserInput]): String
   login(email: String!, password: String!): LoginResponse
   updateUser(id: String!, user: UserInput!): User
-  deleteUser(id: String!): String
+  deleteUser(usersIds: [UserId]): String
 }
 
-input UserInput {
-  firstname: String,
-  lastname: String,
-  email: String
-  password: String
-  role: [String]
-  speciality: String
-}
+
 
 type LoginResponse {
   id: ID!

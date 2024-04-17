@@ -1,5 +1,5 @@
 const Users = require("../database/models/user");
-const utils = require('../utils')
+const utils = require("../utils");
 const userResolver = {
   Query: {
     searchByName: ({ name }) => {
@@ -10,7 +10,7 @@ const userResolver = {
       //   throw new Error("Unauthorized");
       // }
 
-      const { firstname,lastname, email, age, limit = 10, skip = 0 } = args;
+      const { firstname, lastname, email, age, limit = 10, skip = 0 } = args;
 
       let query = [];
 
@@ -29,42 +29,44 @@ const userResolver = {
         return await Users.find({ $or: query }).skip(skip).limit(limit);
       }
     },
-    
   },
   Mutation: {
-      login: async (_, { email, password }) => {
-        // Trouver l'utilisateur par email
-        const user = await Users.findOne({ email });
+    login: async (_, { email, password }) => {
+      // Trouver l'utilisateur par email
+      const user = await Users.findOne({ email });
 
-        if (!user) {
-          throw new Error("No such user found");
-        }
+      if (!user) {
+        throw new Error("No such user found");
+      }
 
-        // Vérifier le mot de passe
-        const valid = utils.ValidatePassword(
-          password,
-          user.password,
-          user.salt
-        );
+      // Vérifier le mot de passe
+      const valid = utils.ValidatePassword(password, user.password, user.salt);
 
-        if (!valid) {
-          throw new Error("Invalid password");
-        }
+      if (!valid) {
+        throw new Error("Invalid password");
+      }
 
-        // Générer un token JWT
-        const token = utils.GenerateSignature({
-          id: user._id,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          role: user.role,
-          speciality: user.speciality,
-          email: user.email,
-        });
+      // Générer un token JWT
+      const token = utils.GenerateSignature({
+        id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        role: user.role,
+        speciality: user.speciality,
+        email: user.email,
+      });
 
-        
-        const { _id, firstname, lastname, role, speciality } = user;
-        return { id: _id, firstname, lastname, role, speciality, email: user?.email, token };
-      },
+      const { _id, firstname, lastname, role, speciality } = user;
+      return {
+        id: _id,
+        firstname,
+        lastname,
+        role,
+        speciality,
+        email: user?.email,
+        token,
+      };
+    },
     createUser: async (_, args) => {
       try {
         const user = new Users(args.user);
@@ -81,10 +83,10 @@ const userResolver = {
         savedUser.token = token;
 
         // Destructure the properties you want from savedUser
-        const { _id,firstname, lastname, role, speciality, email } = savedUser;
+        const { _id, firstname, lastname, role, speciality, email } = savedUser;
 
         // Return a new object with only the properties you want
-        return { id: _id,firstname, lastname, role, speciality, email,token };
+        return { id: _id, firstname, lastname, role, speciality, email, token };
       } catch (err) {
         console.error(err);
         throw err;
@@ -123,13 +125,18 @@ const userResolver = {
       }
       return result;
     },
-    deleteUser: async (_, args) => {
-      const { id } = args;
-      const result = await Users.findByIdAndDelete(id);
-      if (result?.deletedCount === 0) {
-        throw new Error(`No user found with id: ${id}`);
+    deleteUser: async (_, { usersIds }) => {
+      // Map over the array of user IDs and delete each user
+      const deletedUsers = await Promise.all(
+        usersIds.map(({ id }) => Users.findByIdAndDelete(id))
+      );
+
+      // Check if all users were deleted successfully
+      if (deletedUsers.every((user) => user)) {
+        return "Users deleted successfully";
+      } else {
+        throw new Error("Failed to delete one or more users");
       }
-      return `User with id: ${id} was deleted successfully`;
     },
   },
   User: {
