@@ -1,17 +1,24 @@
-type Grade @key(fields: "id"){
+type Grade @key(fields: "id") {
   id: ID!
-  course: ID!
-  grade: Float!
-  user: User!
+  value: Int
+  course: Course
+  user: User
+}
+
+extend type Course @key(fields: "id") {
+  id: ID! @external
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
 }
 
 type Query {
-  grade(id: ID!): Grade
-  grades(course: String): [Grade]
+  getGrade(id: ID!): Grade
+  getAllGrades: [Grade]
 }
 
 type Mutation {
-  createGrade(course: ID!, grade: Float!, userId: ID!): Grade
-  updateGrade(id: ID!, course: String, grade: Float): Grade
-  deleteGrade(id: ID!): Grade
+  createGrade(grade: GradeInput): Grade
+  updateGrade(id: ID!, grade: GradeInput): Grade
 }

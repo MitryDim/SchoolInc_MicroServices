@@ -1,14 +1,17 @@
 input UserId {
   id: ID!
 }
-
+extend type Class @key(fields: "id") {
+  id: ID! @external
+}
 input UserInput {
-  firstname: String
-  lastname: String
-  email: String
-  password: String
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
   role: [String]
   speciality: String
+  class: ID
 }
 
 
@@ -19,6 +22,7 @@ type User @key(fields: "id") {
   email: String
   role: [String]
   speciality: String
+  class: Class
 }
 
 type Query {
@@ -28,6 +32,7 @@ type Query {
     lastname: String
     email: String
     speciality: String
+    class: ID
     role: [String]
     limit: Int
     skip: Int
@@ -39,7 +44,7 @@ type Mutation {
   createUsers(users: [UserInput]): String
   login(email: String!, password: String!): LoginResponse
   updateUser(id: String!, user: UserInput!): User
-  deleteUser(usersIds: [UserId]): String
+  deleteUser(usersIds: [UserId!]!): String
 }
 
 

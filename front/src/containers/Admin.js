@@ -44,9 +44,14 @@ const Admin = () => {
   };
 
   const handleConfirmDelete = async () => {
-    console.log("Suppression des utilisateurs:", selectedUsers);
+    console.log(
+      "Suppression des utilisateurs:",
+      selectedUsers.map((id) => ({ id: id }))
+    );
     try {
-      await deleteUser({ variables: { userIds: selectedUsers } });
+      await deleteUser({
+        variables: { usersIds: selectedUsers.map((id) => ({ id : id })) },
+      });
       console.log("Utilisateurs supprimés avec succès", selectedUsers);
     } catch (error) {
       console.error("Erreur lors de la suppression des utilisateurs:", error);
