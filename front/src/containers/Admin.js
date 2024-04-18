@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import * as CIIcons from "react-icons/ci";
+import { FaUserEdit } from "react-icons/fa";
 
 import { GET_ALL_USERS, DELETE_USER } from "../api/graphql/user-queries";
 
@@ -50,7 +51,7 @@ const Admin = () => {
     );
     try {
       await deleteUser({
-        variables: { usersIds: selectedUsers.map((id) => ({ id : id })) },
+        variables: { usersIds: selectedUsers.map((id) => ({ id: id })) },
       });
       console.log("Utilisateurs supprimés avec succès", selectedUsers);
     } catch (error) {
@@ -63,7 +64,7 @@ const Admin = () => {
     <div className="w-full h-full p-8">
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
         Admin
-      </h1>
+      </h1>{" "}
       <div className="grid grid-cols-2 gap-6 mt-5">
         <div className="bg-white p-6 rounded shadow-md">
           <h2 className="text-xl font-semibold mb-4">Users Lists</h2>
@@ -130,8 +131,11 @@ const Admin = () => {
                       <td className="text-[#673AB7]">{user.role}</td>
                       <td className="text-[#673AB7]">{user.speciality}</td>
                       <th>
-                        <button className="btn btn-ghost btn-xs">
-                          Details
+                        <button
+                          // Call openModal function when clicked
+                          className="pl-2 text-[#673AB7] bg-[#ab96d8] rounded px-1 py-1 hover:text-white hover:bg-[#673AB7]"
+                        >
+                          <FaUserEdit Edit size={20} />
                         </button>
                       </th>
                     </tr>
