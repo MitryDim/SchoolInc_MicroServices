@@ -20,10 +20,39 @@ export const CREATE_USER = gql`
     $firstname: String!
     $lastname: String!
     $email: String!
-    $role: String!
+    $password: String!
+    $role: [String]!
     $speciality: String!
   ) {
     createUser(
+      user: {
+        firstname: $firstname
+        lastname: $lastname
+        email: $email
+        password: $password
+        role: $role
+        speciality: $speciality
+      }
+    ) {
+      id
+      firstname
+      lastname
+      token
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser(
+    $id: ID!
+    $firstname: String!
+    $lastname: String!
+    $email: String!
+    $role: String!
+    $speciality: String!
+  ) {
+    updateUser(
+      id: $id
       input: {
         firstname: $firstname
         lastname: $lastname
@@ -32,31 +61,12 @@ export const CREATE_USER = gql`
         speciality: $speciality
       }
     ) {
+      id
       firstname
       lastname
       email
       role
       speciality
-    }
-  }
-`;
-
-export const UPDATE_USER = gql`
-  mutation UpdateUser(
-    $id: ID!
-    $username: String!
-    $email: String!
-    $age: Int!
-  ) {
-    updateUser(
-      id: $id
-      input: { username: $username, email: $email, age: $age }
-    ) {
-      id
-      username
-      email
-      age
-      createdAt
     }
   }
 `;

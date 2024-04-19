@@ -46,7 +46,7 @@ type Mutation {
   createUsers(users: [UserInput]): String
   login(email: String!, password: String!): LoginResponse
   updateUser(id: String!, user: UserInput!): User
-  deleteUser(usersIds: [UserId!]!): String
+  deleteUser(usersIds: [ID!]!): String
 }
 
 type LoginResponse {
