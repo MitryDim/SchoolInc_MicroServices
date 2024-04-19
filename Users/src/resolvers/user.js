@@ -2,8 +2,11 @@ const Users = require("../database/models/user");
 const utils = require("../utils");
 const userResolver = {
   Query: {
-    searchByName: ({ name }) => {
-      return Users.findOne({ name: name });
+    getUserById: async (_,{ id }) => {
+    return await Users.findById(id);
+    },
+    searchByName: async ({ name }) => {
+      return await Users.findOne({ name: name });
     },
     getAllUsers: async (_, args, context) => {
       // if (!context.userIsAuthorized) {
@@ -140,9 +143,11 @@ const userResolver = {
     },
   },
   User: {
-    __resolveReference(user) {
-      return Users.findById(user.id);
-    },
+    Class(user) {
+      if (!user.classId)
+        return null;
+      return { __typename: "Classes", id: user.classId };
+    }
   },
 };
 

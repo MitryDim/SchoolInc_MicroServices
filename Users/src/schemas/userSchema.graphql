@@ -1,9 +1,6 @@
 input UserId {
   id: ID!
 }
-extend type Class @key(fields: "id") {
-  id: ID! @external
-}
 input UserInput {
   firstname: String!
   lastname: String!
@@ -11,28 +8,33 @@ input UserInput {
   password: String!
   role: [String]
   speciality: String
-  class: ID
+  classId: ID
 }
 
-
 type User @key(fields: "id") {
-  id: ID
-  firstname: String
-  lastname: String
-  email: String
+  id: ID!
+  firstname: String!
+  lastname: String!
+  email: String!
   role: [String]
   speciality: String
-  class: Class
+  classId: ID
+  Class: Class
+}
+
+extend type Class @key(fields: "id") {
+  id: ID @external
 }
 
 type Query {
+  getUserById(id: ID) : User
   searchByName(name: String): [User]
   getAllUsers(
     firstname: String
     lastname: String
     email: String
     speciality: String
-    class: ID
+    classId: ID
     role: [String]
     limit: Int
     skip: Int
@@ -46,8 +48,6 @@ type Mutation {
   updateUser(id: String!, user: UserInput!): User
   deleteUser(usersIds: [UserId!]!): String
 }
-
-
 
 type LoginResponse {
   id: ID!

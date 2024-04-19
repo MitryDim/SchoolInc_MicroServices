@@ -1,3 +1,12 @@
+
+
+input ClassInput {
+  name: String
+  description: String
+}
+
+
+
 type Class @key(fields: "id") {
   id: ID!
   name: String

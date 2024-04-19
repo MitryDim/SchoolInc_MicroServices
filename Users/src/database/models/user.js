@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 const utils = require("../../utils");
 const userSchema = new mongoose.Schema({
   firstname: String,
@@ -20,6 +21,7 @@ const userSchema = new mongoose.Schema({
         `${props.value} is not a valid password. Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.`,
     },
   },
+classId: { type: Schema.ObjectId, required: false },
   salt: String,
 });
 

@@ -62,7 +62,7 @@ export const UPDATE_USER = gql`
 `;
 
 export const DELETE_USER = gql`
-  mutation DeleteUser($usersIds: [ID!]!) {
+  mutation DeleteUser($usersIds: [UserId!]!) {
     deleteUser(usersIds: $usersIds)
   }
 `;

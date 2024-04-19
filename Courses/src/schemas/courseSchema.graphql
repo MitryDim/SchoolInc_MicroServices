@@ -1,0 +1,21 @@
+input CourseInput {
+  name: String
+  description: String
+}
+
+type Course @key(fields: "id") {
+  id: ID!
+  name: String
+  description: String
+  classId: ID
+}
+
+type Query {
+  getCourse(id: ID!): Course
+  getAllCourses: [Course]
+}
+
+type Mutation {
+  createCourse(course: CourseInput): Course
+  updateCourse(id: ID!, course: CourseInput): Course
+}

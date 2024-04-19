@@ -10,18 +10,19 @@ const classResolver = {
     },
   },
   Mutation: {
-    createClass: async (_, { class }) => {
-      const newClass = new Class(class);
+    createClass: async (_, { classInput }) => {
+      const newClass = new Class(classInput);
       return await newClass.save();
     },
-    updateClass: async (_, { id, class }) => {
-      return await Class.findByIdAndUpdate(id, class, { new: true });
+    updateClass: async (_, { id, classInput }) => {
+      return await Class.findByIdAndUpdate(id, classInput, { new: true });
     },
   },
   Class: {
-    __resolveReference(class) {
-      return Class.findById(class.id);
+    __resolveReference(object) {
+      return Class.findById(object.id);
     },
+
   },
 };
 
