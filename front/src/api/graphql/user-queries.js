@@ -20,23 +20,24 @@ export const CREATE_USER = gql`
     $firstname: String!
     $lastname: String!
     $email: String!
-    $role: String!
+    $password: String!
+    $role: [String]!
     $speciality: String!
   ) {
     createUser(
-      input: {
+      user: {
         firstname: $firstname
         lastname: $lastname
         email: $email
+        password: $password
         role: $role
         speciality: $speciality
       }
     ) {
+      id
       firstname
       lastname
-      email
-      role
-      speciality
+      token
     }
   }
 `;
@@ -52,7 +53,13 @@ export const UPDATE_USER = gql`
   ) {
     updateUser(
       id: $id
-      input: { firstname: $firstname, lastname: $lastname, email: $email, role: $role, speciality: $speciality}
+      input: {
+        firstname: $firstname
+        lastname: $lastname
+        email: $email
+        role: $role
+        speciality: $speciality
+      }
     ) {
       id
       firstname
