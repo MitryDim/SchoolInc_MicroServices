@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const {Schema} = mongoose;
 const classSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -6,7 +7,8 @@ const classSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-  }
+  },
+  coursesId : [{ type: Schema.ObjectId, required: false }],
 });
 
 

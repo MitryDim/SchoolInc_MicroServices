@@ -5,8 +5,9 @@ const { ApolloGateway, IntrospectAndCompose } = require("@apollo/gateway");
 const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
     subgraphs: [
+      { name: "Courses", url: "http://localhost:4003/" },
       { name: "Classes", url: "http://localhost:4002/" },
-      { name: "User", url: "http://localhost:4001/graphql" },
+      { name: "User", url: "http://localhost:4001/" },
     ],
   }),
 });

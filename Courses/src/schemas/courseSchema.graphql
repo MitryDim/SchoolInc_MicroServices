@@ -1,13 +1,18 @@
 input CourseInput {
   name: String
   description: String
+  teacherId: [ID]
+}
+
+extend type User @key(fields: "id") {
+    id: ID @external
 }
 
 type Course @key(fields: "id") {
   id: ID!
   name: String
   description: String
-  classId: ID
+  teacherId: [ID]
 }
 
 type Query {
@@ -18,4 +23,5 @@ type Query {
 type Mutation {
   createCourse(course: CourseInput): Course
   updateCourse(id: ID!, course: CourseInput): Course
+  deleteCourse(id: ID!): String
 }

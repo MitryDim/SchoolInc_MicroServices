@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
         `${props.value} is not a valid password. Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.`,
     },
   },
-classId: { type: Schema.ObjectId, required: false },
+  classId: { type: Schema.ObjectId, required: false },
+  enable: { type: Boolean, required: false, default: true },
   salt: String,
 });
 
@@ -30,7 +31,7 @@ userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
       return next();
     }
-    
+
     const salt = await utils.GenerateSalt();
     console.log(this.password, salt);
     const password = await utils.GeneratePassword(this.password, salt);

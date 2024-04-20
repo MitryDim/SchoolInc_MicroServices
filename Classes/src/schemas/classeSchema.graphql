@@ -3,14 +3,20 @@
 input ClassInput {
   name: String
   description: String
+  coursesId: [ID!]
 }
 
+extend type Course @key(fields: "id") {
+  id: ID @external
+}
 
 
 type Class @key(fields: "id") {
   id: ID!
   name: String
   description: String
+  coursesId: [ID]
+  Courses: [Course]
 }
 
 type Query {

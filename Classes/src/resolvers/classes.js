@@ -10,7 +10,9 @@ const classResolver = {
     },
   },
   Mutation: {
-    createClass: async (_, { classInput }) => {
+    createClass: async (_, args) => {
+      console.log(args);
+      const classInput = args.class;
       const newClass = new Class(classInput);
       return await newClass.save();
     },
@@ -19,10 +21,14 @@ const classResolver = {
     },
   },
   Class: {
-    __resolveReference(object) {
+    __resolveReference(object, { datasource }) {
+      console.log("datasource", datasource);
       return Class.findById(object.id);
     },
-
+    Courses(classObj) {
+      console.log('test',classObj);
+      return classObj.coursesId.map((id) => ({ __typename: "Course", id: id }));
+    },
   },
 };
 

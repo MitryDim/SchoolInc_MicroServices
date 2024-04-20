@@ -2,8 +2,8 @@ const Users = require("../database/models/user");
 const utils = require("../utils");
 const userResolver = {
   Query: {
-    getUserById: async (_,{ id }) => {
-    return await Users.findById(id);
+    getUserById: async (_, { id }) => {
+      return await Users.findById(id);
     },
     searchByName: async ({ name }) => {
       return await Users.findOne({ name: name });
@@ -129,25 +129,30 @@ const userResolver = {
       return result;
     },
     deleteUser: async (_, { usersIds }) => {
-      // Map over the array of user IDs and delete each user
-      const deletedUsers = await Promise.all(
-        usersIds.map(({ id }) => Users.findByIdAndDelete(id))
+      // Map over the array of user IDs and update each user
+      const updatedUsers = await Promise.all(
+        usersIds.map(({ id }) =>
+          Users.findByIdAndUpdate(id, { enable: false }, { new: true })
+        )
       );
 
-      // Check if all users were deleted successfully
-      if (deletedUsers.every((user) => user)) {
-        return "Users deleted successfully";
+      // Check if all users were updated successfully
+      if (updatedUsers.every((user) => user)) {
+        return "Users updated successfully";
       } else {
-        throw new Error("Failed to delete one or more users");
+        throw new Error("Failed to update one or more users");
       }
     },
   },
   User: {
     Class(user) {
-      if (!user.classId)
-        return null;
+      if (!user.classId) return null;
       return { __typename: "Classes", id: user.classId };
-    }
+    },
+    __resolveReference(object, { datasource }) {
+      console.log("datasource", datasource);
+      return Class.findById(object.id);
+    },
   },
 };
 
