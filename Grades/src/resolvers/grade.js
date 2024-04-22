@@ -1,96 +1,47 @@
-
-const utils = require('../utils')
-
-const userResolver = {
+const Grades = require("../database/models/grade");
+const gradeResolver = {
   Query: {
-    searchByName: ({ name }) => {
-      return Users.findOne({ name: name });
+    getGrade: async (_, { id }) => {
+      return await Grades.findById(id);
     },
-    getAllUsers: async (_, args,context) => {
-      if (!context.userIsAuthorized) {
-        throw new Error("Unauthorized");
-      }
-     
-      const { name, email, age, limit = 10, skip = 0 } = args;
-
-      console.log("search ", name, email, age, limit, skip);
-      let query = [];
-
-      if (name) {
-        query.push({ name: name });
-      }
-
-      if (email) {
-        query.push({ email: { $regex: email } });
-      }
-
-      if (age) {
-        query.push({ age: { $gte: age } });
-      }
-
-      if (query.length === 0) {
-        console.log("no results");
-        return await Users.find().skip(skip).limit(limit);
-      } else {
-        return await Users.find({ $or: query }).skip(skip).limit(limit);
-      }
+    getAllGrades: async () => {
+      return await Grades.find();
+    },
+    getAllGradesByUserId: async (_, { userId }) => {
+      return await Grades.find({ userId: userId });
+    },
+    getAllGradesByCourseId: async (_, { courseId }) => {
+      return await Grades.find({ courseId: courseId });
     },
   },
   Mutation: {
-    createUser: async (_, args) => {
-      try {
-        console.log("create user")
-        const user = new Users(args.user);
-        const savedUser = await user.save();
-
-        const token = utils.GenerateSignature({id: savedUser._id, name: savedUser.name, email: savedUser.email });
-        savedUser.token = token;       
-         console.log("saved user", savedUser);
-        return savedUser;
-      } catch (err) {
-        console.error(err);
-        throw err;
-      }
+    createGrade: async (_, { grade }) => {
+      const newGrade = new Grades(grade);
+      return await newGrade.save();
     },
-    createUsers: async ({ users1 }) => {
-      try {
-        await Users.insertMany(users1);
-        return "Users created successfully";
-      } catch (err) {
-        throw new Error(`error during insertUser: ${err.message}`);
-      }
-    },
-    updateUser: async (_, args, context) => {
-      if (!context.userIsAuthorized) {
-        throw new Error("Unauthorized");
-      }
-      const { id, user } = args;
-      const update = {
-        ...(user.name && { name: user.name }),
-        ...(user.email && { email: user.email }),
-        ...(user.age && { age: user.age }),
-      };
-
-      const result = await Users.findByIdAndUpdate(
-        id,
-        { $set: update },
-        { returnDocument: "after" }
-      );
-
-      if (!result) {
-        throw new Error(`No user found with id: ${id}`);
-      }
-      return result;
-    },
-    deleteUser: async (_, args) => {
-      const { id } = args;
-      const result = await Users.findByIdAndDelete(id);
-      if (result?.deletedCount === 0) {
-        throw new Error(`No user found with id: ${id}`);
-      }
-      return `User with id: ${id} was deleted successfully`;
+    updateGrade: async (_, { id, grade }) => {
+      return await Grades.findByIdAndUpdate(id, grade, { new: true });
     },
   },
+  Grade: {
+    course: (gradeObj) => {
+      
+      return { __typename: "Course", id: gradeObj.courseId };
+    },
+    Class: (gradeObj) => {
+      console.log("Class")
+      return { __typename: "Class", id: gradeObj.classId };
+    },
+    user: (gradeObj) => {
+      return { __typename: "User", id: gradeObj.userId };
+    },
+  },
+  User: {
+    Class: (gradeObj) => {
+      console.log("Class");
+      return { __typename: "Class", id: gradeObj.classId };
+    }
+  }
 };
 
-module.exports = userResolver;
+module.exports = gradeResolver;

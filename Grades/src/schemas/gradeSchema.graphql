@@ -1,3 +1,17 @@
+input GradeInput {
+  value: Int!
+  courseId: ID!
+  userId: ID!
+}
+
+extend type Course @key(fields: "id") {
+  id: ID @external
+}
+
+extend type User @key(fields: "id") {
+  id: ID @external
+}
+
 type Grade @key(fields: "id") {
   id: ID!
   value: Int
@@ -5,17 +19,15 @@ type Grade @key(fields: "id") {
   user: User
 }
 
-extend type Course @key(fields: "id") {
-  id: ID! @external
-}
-
-extend type User @key(fields: "id") {
-  id: ID! @external
+extend type Class @key(fields: "id") {
+  id: ID @external
 }
 
 type Query {
   getGrade(id: ID!): Grade
   getAllGrades: [Grade]
+  getAllGradesByUserId(userId: ID!): [Grade]
+  getAllGradesByCourseId(courseId: ID!): [Grade]
 }
 
 type Mutation {

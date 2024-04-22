@@ -1,3 +1,3 @@
 module.exports = {
-    userResolver: require('./grade'),
+    gradeResolver: require('./grade'),
 }

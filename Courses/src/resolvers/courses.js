@@ -41,12 +41,6 @@ const courseResolver = {
       }
     },
   },
-  Courses: {
-    __resolveReference(object) {
-      console.log(object);
-      return Course.findById(object.id);
-    }
-  },
 };
 
 module.exports = courseResolver;

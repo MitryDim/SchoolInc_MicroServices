@@ -21,9 +21,10 @@ const classResolver = {
     },
   },
   Class: {
-    __resolveReference(object, { datasource }) {
+    async __resolveReference(object, { datasource }) {
       console.log("datasource", datasource);
-      return Class.findById(object.id);
+      console.log("class", object);
+      return await Class.findById(object.id);
     },
     Courses(classObj) {
       console.log('test',classObj);

@@ -26,6 +26,8 @@ extend type Class @key(fields: "id") {
   id: ID @external
 }
 
+
+
 type Query {
   getUserById(id: ID) : User
   searchByName(name: String): [User]
