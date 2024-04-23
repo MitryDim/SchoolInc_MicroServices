@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
+import { useQuery, gql } from "@apollo/client";
+import { useUser } from "../context/userContext";
 
 const Dashboard = () => {
-  const user = {
-    firstname: "Johnny",
-    lastname: "Deep",
-    role: "S.Eng4 2016-2017",
-    spe: "Web Development",
-  };
+  const user = useUser();
+
+  console.log(user);
 
   // State variables for modal visibility and user data
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userData, setUserData] = useState(user);
+  // const [userData, setUserData] = useState(user);
 
   // Function to handle opening the modal
   const openModal = () => {
@@ -23,22 +22,22 @@ const Dashboard = () => {
     setIsModalOpen(false);
   };
 
-  // Function to handle form field changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value,
-    });
-  };
+  // // Function to handle form field changes
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUserData({
+  //     ...userData,
+  //     [name]: value,
+  //   });
+  // };
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Perform actions to update user data (e.g., make API call)
-    console.log("User data updated:", userData);
-    closeModal();
-  };
+  // // Function to handle form submission
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Perform actions to update user data (e.g., make API call)
+  //   console.log("User data updated:", userData);
+  //   closeModal();
+  // };
 
   return (
     <div className="w-full h-full p-8">
@@ -47,9 +46,7 @@ const Dashboard = () => {
       </h1>
       <div className="grid grid-cols-2 gap-6 mt-5">
         <div className="bg-white p-6 rounded shadow-md">
-          <h2 className="text-xl font-semibold mb-4">
-            User Information
-          </h2>
+          <h2 className="text-xl font-semibold mb-4">User Information</h2>
           <div className="flex items-center mb-4">
             <div className="avatar">
               <div className="w-24 h-auto rounded-full ring ring-[#673AB7] ring-offset-base-100 ring-offset-2">
@@ -61,10 +58,10 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-lg font-semibold">
-                {userData.firstname} {userData.lastname}
+                {/* {user.firstname} {user.lastname} */}
               </p>
               <p className="text-xs font-montserrat font-medium text-white bg-[#673AB7] py-1 px-1 rounded-lg">
-                {userData.role}
+                {/* {userData.role} */}
               </p>
             </div>
             <div className="ml-auto">
@@ -79,7 +76,7 @@ const Dashboard = () => {
           <div className="mt-4">
             <p className="text-gray-700 font-semibold">Specialization:</p>
             <p className="text-sm text-gray-500 bg-gray-200 rounded-md px-2 py-1 inline-block mt-1">
-              {userData.spe}
+              {/* {userData.spe} */}
             </p>
           </div>
         </div>
@@ -101,13 +98,15 @@ const Dashboard = () => {
           </ul>
         </div>
       </div>
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded shadow-md">
             <h2 className="text-xl font-semibold mb-4">Edit User</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-1">First Name</label>
+                <label className="block text-gray-700 font-semibold mb-1">
+                  First Name
+                </label>
                 <input
                   type="text"
                   name="firstname"
@@ -117,7 +116,9 @@ const Dashboard = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-1">Last Name</label>
+                <label className="block text-gray-700 font-semibold mb-1">
+                  Last Name
+                </label>
                 <input
                   type="text"
                   name="lastname"
@@ -127,7 +128,9 @@ const Dashboard = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-1">Specialization</label>
+                <label className="block text-gray-700 font-semibold mb-1">
+                  Specialization
+                </label>
                 <input
                   type="text"
                   name="spe"
@@ -151,7 +154,7 @@ const Dashboard = () => {
             </form>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

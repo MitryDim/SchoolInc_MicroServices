@@ -53,7 +53,10 @@ const Navbar = () => {
       </div>
       <div className="mb-5 flex flex-col items-center justify-end">
         <button
-          onClick={() => alert("You have been logged out")}
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }}
           className="flex items-center text-white py-1 px-1 rounded hover:bg-white hover:text-[#673AB7] transition duration-300 ease-in-out font-montserrat mb-4"
         >
           <MDIcons.MdLogout size={20} className="mr-1" />
