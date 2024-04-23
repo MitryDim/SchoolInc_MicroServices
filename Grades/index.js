@@ -4,27 +4,30 @@ const { API_PORT } = require("./src/config");
 const { gradeSchema } = require("./src/schemas");
 const { gradeResolver } = require("./src/resolvers/index");
 const { ValidateSignature } = require("./src/utils");
+const GradeAPI = require("./src/API/gradeAPI");
 
-require("./src/database/mongoConnect").connect();
+const mongoose = require("./src/database/mongoConnect");
+const Grade = require("./src/database/models/grade"); // Assurez-vous que le chemin est correct
 
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 
-const server = new ApolloServer({
-  schema: buildSubgraphSchema([
-    { typeDefs: gradeSchema, resolvers: gradeResolver },
-  ]),
-  context: async ({ req }) => {
-    // obtenez le token d'autorisation de l'en-tête de la requête    const token = req.headers.authorization || "";
-    const token = req.headers.authorization || "";
-    // vérifiez si le token est valide
-    const userIsAuthorized = ValidateSignature(token);
-
-    // passez userIsAuthorized au contexte
-    return { userIsAuthorized };
-  },
-});
-
 async function StartServer() {
+  await mongoose.connect();
+
+  const gradeAPI = new GradeAPI({ modelOrCollection: Grade });
+
+  const server = new ApolloServer({
+    schema: buildSubgraphSchema([
+      { typeDefs: gradeSchema, resolvers: gradeResolver },
+    ]),
+    context: async ({ req }) => {
+      const token = req.headers.authorization || "";
+      const userIsAuthorized = ValidateSignature(token);
+
+      return { userIsAuthorized, dataSources: { gradeAPI } };
+    },
+  });
+
   const { url } = await startStandaloneServer(server, {
     listen: { port: API_PORT },
   });

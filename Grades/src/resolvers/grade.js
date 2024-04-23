@@ -25,23 +25,40 @@ const gradeResolver = {
   },
   Grade: {
     course: (gradeObj) => {
-      
       return { __typename: "Course", id: gradeObj.courseId };
     },
     Class: (gradeObj) => {
-      console.log("Class")
       return { __typename: "Class", id: gradeObj.classId };
     },
     user: (gradeObj) => {
+      console.log(gradeObj.userId);
       return { __typename: "User", id: gradeObj.userId };
     },
+    grade: (gradeObj) => {
+      console.log(gradeObj);
+      return null
+    },
+    __resolveReference: (reference, { dataSources }) => {
+      console.log(reference, dataSources);
+      if (reference.userId) {
+        return dataSources.gradeAPI.getGradeByUserId(reference.userId);
+      }
+      if (reference.courseId) {
+        return dataSources.gradeAPI.getGradeByCourseId(reference.courseId);
+      }
+    },
   },
-  User: {
-    Class: (gradeObj) => {
-      console.log("Class");
-      return { __typename: "Class", id: gradeObj.classId };
-    }
-  }
+  grades: {
+    __resolveReference: (reference, { dataSources }) => {
+      console.log("reference", dataSources);
+      if (reference.userId) {
+        return dataSources.gradeAPI.getGradeByUserId(reference.userId);
+      }
+      if (reference.courseId) {
+        return dataSources.gradeAPI.getGradeByCourseId(reference.courseId);
+      }
+    },
+  },
 };
 
 module.exports = gradeResolver;

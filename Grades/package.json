@@ -14,6 +14,7 @@
   "dependencies": {
     "@apollo/server": "^4.10.2",
     "@apollo/subgraph": "^2.7.2",
+    "apollo-datasource-mongodb": "^0.6.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "graphql-tag": "^2.12.6",
