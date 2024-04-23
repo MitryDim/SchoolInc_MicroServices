@@ -11,6 +11,10 @@ input UserInput {
   classId: ID
 }
 
+
+extend type Class @key(fields: "id") {
+  id: ID @external
+}
 type User @key(fields: "id") {
   id: ID!
   firstname: String!
@@ -22,9 +26,8 @@ type User @key(fields: "id") {
   Class: Class
 }
 
-extend type Class @key(fields: "id") {
-  id: ID @external
-}
+
+
 
 
 

@@ -149,9 +149,12 @@ const userResolver = {
       if (!user.classId) return null;
       return { __typename: "Classes", id: user.classId };
     },
-    __resolveReference(object, { datasource }) {
-      console.log("datasource", datasource);
-      return Class.findById(object.id);
+    grades: (user) => {
+      console.log("Grades");
+      return { __typename: "Grade", userId: user.id };
+    },
+    __resolveReference(object, { datasources }) {
+      return Users.findById(object.id);
     },
   },
 };
