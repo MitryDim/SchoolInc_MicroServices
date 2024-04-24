@@ -29,6 +29,7 @@ module.exports.GenerateSignature = async (payload) => {
 };
 
 module.exports.ValidateSignature = async (signature) => {
+  console.log("test")
   try {
     if (!signature) return false;
 

@@ -1,32 +1,36 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
-const { API_PORT } = require('./src/config')
+const { API_PORT } = require("./src/config");
 const { userSchema } = require("./src/schemas");
 const { userResolver } = require("./src/resolvers/index");
 const { ValidateSignature } = require("./src/utils");
 
 require("./src/database/mongoConnect").connect();
 
-const { buildSubgraphSchema } = require('@apollo/subgraph');
-
-
-
+const { buildSubgraphSchema } = require("@apollo/subgraph");
 
 const server = new ApolloServer({
-  schema: buildSubgraphSchema([{ typeDefs: userSchema, resolvers: userResolver }]),
-  context: async ({ req }) => {
-    // obtenez le token d'autorisation de l'en-tête de la requête    const token = req.headers.authorization || "";
-  const token = req.headers.authorization || "";
-    // vérifiez si le token est valide
-    const userIsAuthorized = ValidateSignature(token);
-
-    // passez userIsAuthorized au contexte
-    return { userIsAuthorized };
-  },
+  schema: buildSubgraphSchema([
+    { typeDefs: userSchema, resolvers: userResolver },
+  ]),
 });
 
 async function StartServer() {
-  const { url } = await startStandaloneServer(server,{listen: {port: API_PORT}});
+  const { url } = await startStandaloneServer(server, {
+    context: async ({ req }) => {
+      const token = req.headers.authorization || "";
+      const user = await ValidateSignature(token);
+
+      const userAuth = {
+        ...user,
+        isAdmin: user?.role?.includes("admin"),
+        isProfessor: user?.role?.includes("professor"),
+      };
+
+      return { userAuth };
+    },
+    listen: { port: API_PORT },
+  });
   console.log(`🚀  Server ready at ${url}`);
 }
 

@@ -11,6 +11,7 @@ const gateway = new ApolloGateway({
       { name: "User", url: "http://localhost:4001/" },
     ],
   }),
+  serviceHealthCheck: true,
 });
 
 const server = new ApolloServer({ gateway });

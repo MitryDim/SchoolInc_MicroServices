@@ -103,11 +103,17 @@ const userResolver = {
         throw new Error(`error during insertUser: ${err.message}`);
       }
     },
-    updateUser: async (_, args, context) => {
-      if (!context.userIsAuthorized) {
+    updateUser: async (_, args, { userAuth }) => {
+      if (!userAuth) {
         throw new Error("Unauthorized");
       }
+
       const { id, user } = args;
+
+      if(!isAdmin && !isProfessor && id !== userAuth.id) {
+        throw new Error("Unauthorized");
+      }
+
       const update = {
         ...(user.firstname && { firstname: user.firstname }),
         ...(user.lastname && { lastname: user.lastname }),
@@ -128,8 +134,11 @@ const userResolver = {
       }
       return result;
     },
-    deleteUser: async (_, { usersIds }) => {
-      // Map over the array of user IDs and update each user
+    deleteUser: async (_, { usersIds }, { userAuth }) => {
+      // Check if the user is authorized
+      if (!userAuth.isAdmin) {
+        throw new Error("Unauthorized");
+      }
       const updatedUsers = await Promise.all(
         usersIds.map(({ id }) =>
           Users.findByIdAndUpdate(id, { enable: false }, { new: true })

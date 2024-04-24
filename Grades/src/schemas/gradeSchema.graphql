@@ -12,7 +12,7 @@ extend type User @key(fields: "id") {
   id: ID @external
 }
 
-type Grade @join__type(graph: GRADES, key: "id")  {
+type Grade @key(fields: "id") {
   id: ID!
   value: Int
   course: Course
@@ -26,11 +26,14 @@ extend type Class @key(fields: "id") {
 type Query {
   getGrade(id: ID!): Grade
   getAllGrades: [Grade]
-  getAllGradesByUserId(userId: ID!): [Grade]
+  getAllGradesByUserId(userId: ID): [Grade]
   getAllGradesByCourseId(courseId: ID!): [Grade]
+  getAllGradesByCourseIds(courseIds: [ID!]!): [Grade]
+  getAllGradesByUserIdAndCourseId(userId: ID, courseId: ID!): [Grade]
 }
 
 type Mutation {
   createGrade(grade: GradeInput): Grade
   updateGrade(id: ID!, grade: GradeInput): Grade
+  deleteGrade(id: ID!): Grade
 }
