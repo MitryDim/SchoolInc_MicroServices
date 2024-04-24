@@ -58,10 +58,10 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-lg font-semibold">
-                {/* {user.firstname} {user.lastname} */}
+                {user.firstname} {user.lastname}
               </p>
               <p className="text-xs font-montserrat font-medium text-white bg-[#673AB7] py-1 px-1 rounded-lg">
-                {/* {userData.role} */}
+                {/* {user.role} */}
               </p>
             </div>
             <div className="ml-auto">
@@ -76,7 +76,7 @@ const Dashboard = () => {
           <div className="mt-4">
             <p className="text-gray-700 font-semibold">Specialization:</p>
             <p className="text-sm text-gray-500 bg-gray-200 rounded-md px-2 py-1 inline-block mt-1">
-              {/* {userData.spe} */}
+              {/* {user.spe} */}
             </p>
           </div>
         </div>

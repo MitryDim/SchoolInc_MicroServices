@@ -15,8 +15,6 @@ import Admin from "./Admin";
 import Login from "./Login";
 
 function App() {
-  const token = localStorage.getItem("token");
-
   return (
     <Router>
       <div className="flex">
@@ -25,18 +23,12 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
-            {/* Private routes */}
-            {token ? (
-              <>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/grades" element={<Grades />} />
-                <Route path="/classes" element={<Classes />} />
-                <Route path="/tickets" element={<Tickets />} />
-                <Route path="/admin" element={<Admin />} />
-              </>
-            ) : (
-              <Route path="/login" element={<Login />} />
-            )}
+
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/grades" element={<Grades />} />
+            <Route path="/classes" element={<Classes />} />
+            <Route path="/tickets" element={<Tickets />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
