@@ -3,9 +3,35 @@ import NavbarButton from "../components/NavbarButton";
 import * as MDIcons from "react-icons/md";
 import * as IMIcons from "react-icons/im";
 import { Link } from "react-router-dom";
-
+import { jwtDecode } from "jwt-decode";
+import { gql, useApolloClient } from "@apollo/client";
 const Navbar = () => {
+  const client = useApolloClient();
   const token = localStorage.getItem("token"); // Check for token in local storage
+
+  try {
+    const user = jwtDecode(token);
+
+    if (user) {
+      client.cache.writeQuery({
+        query: gql`
+          query GetUser {
+            user {
+              id
+              firstname
+              lastname
+            }
+          }
+        `,
+        data: {
+          user,
+        },
+      });
+    }
+  } catch (e) {
+    client.cache.reset();
+    console.error("Failed to decode JWT:", e);
+  }
 
   return (
     <div className="w-28 h-screen bg-[#673AB7] text-white flex flex-col justify-between">

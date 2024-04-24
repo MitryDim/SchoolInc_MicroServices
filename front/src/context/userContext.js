@@ -1,6 +1,6 @@
 import { useApolloClient, gql } from "@apollo/client";
 
-export function useUser() {
+export  function useUser() {
   const client = useApolloClient();
 
   const user = client.cache.readQuery({
@@ -14,6 +14,5 @@ export function useUser() {
       }
     `,
   });
-  console.log(user);
   return user;
 }

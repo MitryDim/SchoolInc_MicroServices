@@ -13,8 +13,6 @@ const httpLink = new HttpLink({
   uri: "http://localhost:4001/",
 });
 
-console.log("httpLink", httpLink);
-
 // Utilisez setContext pour créer un lien qui ajoute le token d'authentification à l'en-tête Authorization de chaque requête
 const authLink = setContext((_, { headers }) => {
   // Obtenez le token d'authentification de localStorage si possible
@@ -30,7 +28,6 @@ const authLink = setContext((_, { headers }) => {
     try {
       const user = jwtDecode(token);
       context.user = user;
-      console.log("user", user);
       // Écrire les données de l'utilisateur dans le cache
       client.cache.writeQuery({
         query: gql`

@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUserEdit } from "react-icons/fa";
 import { useQuery, gql } from "@apollo/client";
 import { useUser } from "../context/userContext";
 
 const Dashboard = () => {
-  const user = useUser();
+  const [user, setUser] = useState(null);
+  const userContext = useUser();
 
-  console.log(user);
+  useEffect(() => {
+    if (userContext?.user) {
+      setUser(userContext.user);
+    }
+  }, [userContext?.user]); // Ajoutez userContext.user comme dépendance
 
   // State variables for modal visibility and user data
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,6 +44,10 @@ const Dashboard = () => {
   //   closeModal();
   // };
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="w-full h-full p-8">
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
@@ -58,7 +67,7 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-lg font-semibold">
-                {user.firstname} {user.lastname}
+                {user?.firstname} {user?.lastname}
               </p>
               <p className="text-xs font-montserrat font-medium text-white bg-[#673AB7] py-1 px-1 rounded-lg">
                 {/* {user.role} */}
