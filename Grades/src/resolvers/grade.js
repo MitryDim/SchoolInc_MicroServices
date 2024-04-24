@@ -20,7 +20,7 @@ const gradeResolver = {
         throw new Error("You are not authorized to access this resource");
 
       if (id) {
-        if (userAuth.id !== id && (userAuth.isProfessor || userAuth.isAdmin))
+        if (userAuth.id !== id && userAuth.isProfessor && userAuth.isAdmin)
           throw new Error("You are not authorized to access this resource");
       } else id = userAuth.id;
 
@@ -30,7 +30,7 @@ const gradeResolver = {
       if (!userAuth)
         throw new Error("You must be logged in to access this resource");
 
-      if (userAuth.isProfessor || userAuth.isAdmin)
+      if (userAuth.isProfessor && userAuth.isAdmin)
         throw new Error("You are not authorized to access this resource");
       return await Grades.find({ courseId: courseId });
     },
@@ -39,7 +39,7 @@ const gradeResolver = {
       if (!userAuth)
         throw new Error("You must be logged in to access this resource");
 
-      if (userAuth.isProfessor || userAuth.isAdmin)
+      if (userAuth.isProfessor && userAuth.isAdmin)
         throw new Error("You are not authorized to access this resource");
 
       return await Grades.find({ courseId: { $in: courseIds } });
@@ -51,7 +51,7 @@ const gradeResolver = {
         throw new Error("You are not authorized to access this resource");
 
       if (id) {
-        if (userAuth.id !== id && (userAuth.isProfessor || userAuth.isAdmin))
+        if (userAuth.id !== id && (userAuth.isProfessor && userAuth.isAdmin))
           throw new Error("You are not authorized to access this resource");
       } else id = userAuth.id;
       return await Grades.find({ userId: id, courseId: courseId });
