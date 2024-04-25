@@ -25,4 +25,5 @@ type Mutation {
   createCourse(course: CourseInput): Course
   updateCourse(id: ID!, course: CourseInput): Course
   deleteCourse(id: ID!): String
+  addTeacherToCourse(courseId: ID!, teacherId: ID!): Course
 }

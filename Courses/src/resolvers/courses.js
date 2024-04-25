@@ -20,6 +20,20 @@ const courseResolver = {
     updateCourse: async (_, { id, course }) => {
       return await Course.findByIdAndUpdate(id, course, { new: true });
     },
+    addTeacherToCourse: async (_, { courseId, teacherId }) => {
+      // Trouver le cours et mettre à jour
+      const course = await Course.findOneAndUpdate(
+        { _id: courseId }, // condition de recherche
+        { $addToSet: { teacherId: teacherId } }, // opération de mise à jour
+        { new: true } // options
+      );
+
+      if (!course) {
+        throw new Error("Course not found");
+      }
+
+      return course;
+    },
   },
   Course: {
     async __resolveReference(object) {
