@@ -53,6 +53,7 @@ type Mutation {
   login(email: String!, password: String!): LoginResponse
   updateUser(id: String!, user: UserInput!): User
   deleteUser(usersIds: [UserId!]!): String
+  removeUserFromClass(userId: ID!): User
 }
 
 type LoginResponse {
