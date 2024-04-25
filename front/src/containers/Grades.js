@@ -44,16 +44,27 @@ const Grades = () => {
             </tr>
           </thead>
           <tbody>
-            {grades.map((grade, index) => (
-              <tr key={grade.id}>
-                <td className="py-3 px-4 font-montserrat text-center">
-                  {grade.course?.name}
-                </td>
-                <td className="py-3 px-4 font-montserrat text-center">
-                  {grade.value} / 20
+            {grades.length > 0 ? (
+              grades.map((grade, index) => (
+                <tr key={grade.id}>
+                  <td className="py-3 px-4 font-montserrat text-center">
+                    {grade.course?.name}
+                  </td>
+                  <td className="py-3 px-4 font-montserrat text-center">
+                    {grade.value} / 20
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={2}
+                  className="py-3 px-4 font-montserrat text-center"
+                >
+                  No Grades for the moment
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

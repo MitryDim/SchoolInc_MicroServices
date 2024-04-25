@@ -15,6 +15,28 @@ export const GET_ALL_USERS = gql`
   }
 `;
 
+export const GET_USER_BY_ID = gql`
+  query GetUserById($id: ID!) {
+    getUserById(id: $id) {
+      id
+      firstname
+      lastname
+      email
+      role
+      speciality
+      Class {
+        id
+        description
+        name
+        Courses {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export const LOGIN_USER = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -54,24 +76,8 @@ export const CREATE_USER = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser(
-    $id: ID!
-    $firstname: String!
-    $lastname: String!
-    $email: String!
-    $role: String!
-    $speciality: String!
-  ) {
-    updateUser(
-      id: $id
-      input: {
-        firstname: $firstname
-        lastname: $lastname
-        email: $email
-        role: $role
-        speciality: $speciality
-      }
-    ) {
+  mutation UpdateUser($id: ID!, $user: UserInput!) {
+    updateUser(id: $id, user: $user) {
       id
       firstname
       lastname
