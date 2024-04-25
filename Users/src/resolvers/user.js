@@ -118,6 +118,7 @@ const userResolver = {
     },
     createUser: async (_, args) => {
       try {
+        console.log("args", args);
         const user = new Users(args.user);
         const savedUser = await user.save();
 
