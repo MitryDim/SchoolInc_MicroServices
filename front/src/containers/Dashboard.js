@@ -7,6 +7,8 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const userContext = useUser();
 
+  console.log("userContext", userContext);
+
   useEffect(() => {
     if (userContext?.user) {
       setUser(userContext.user);
@@ -60,7 +62,7 @@ const Dashboard = () => {
             <div className="avatar">
               <div className="w-24 h-auto rounded-full ring ring-[#673AB7] ring-offset-base-100 ring-offset-2">
                 <img
-                  src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                  src={`https://robohash.org/${user?.firstname}.png`}
                   alt="Avatar"
                 />
               </div>
@@ -69,8 +71,8 @@ const Dashboard = () => {
               <p className="text-lg font-semibold">
                 {user?.firstname} {user?.lastname}
               </p>
-              <p className="text-xs font-montserrat font-medium text-white bg-[#673AB7] py-1 px-1 rounded-lg">
-                {/* {user.role} */}
+              <p className="text-xs w-auto font-montserrat font-medium text-white bg-[#673AB7] py-1 px-1 rounded-lg">
+                {user?.role}
               </p>
             </div>
             <div className="ml-auto">
@@ -85,7 +87,7 @@ const Dashboard = () => {
           <div className="mt-4">
             <p className="text-gray-700 font-semibold">Specialization:</p>
             <p className="text-sm text-gray-500 bg-gray-200 rounded-md px-2 py-1 inline-block mt-1">
-              {/* {user.spe} */}
+              {user?.speciality}
             </p>
           </div>
         </div>

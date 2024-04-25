@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:4001/",
+  uri: "http://localhost:4000/",
 });
 
 // Utilisez setContext pour créer un lien qui ajoute le token d'authentification à l'en-tête Authorization de chaque requête
@@ -36,6 +36,9 @@ const authLink = setContext((_, { headers }) => {
               id
               firstname
               lastname
+              email
+              role
+              speciality
             }
           }
         `,

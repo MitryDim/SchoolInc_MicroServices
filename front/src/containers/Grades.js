@@ -1,11 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, gql } from "@apollo/client";
+import { useUser } from "../context/userContext";
+import { GET_ALL_GRADES_BY_USER } from "../api/graphql/grade-queries";
 
 const Grades = () => {
-  const [grades, setGrades] = useState([
-    { id: 1, course: "Mathematics", grade: "18/20" },
-    { id: 2, course: "Science", grade: "15/20" },
-    // Add more fake data here
-  ]);
+  const { user } = useUser();
+  const [grades, setGrades] = useState([]);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      setUserId(user.id);
+    }
+  }, [user]);
+
+  const { data, loading, error } = useQuery(GET_ALL_GRADES_BY_USER, {
+    variables: { userId },
+    skip: !userId,
+  });
+
+  useEffect(() => {
+    if (data && data.getAllGradesByUser) {
+      setGrades(data.getAllGradesByUser);
+    }
+  }, [data]);
+
+  console.log(data, loading, error);
 
   return (
     <div className="w-full h-full p-8">
@@ -29,7 +49,9 @@ const Grades = () => {
             {grades.map((grade) => (
               <tr key={grade.id}>
                 <td className="py-2 px-4 font-montserrat">{grade.course}</td>
-                <td className="py-2 px-4 flex justify-center font-montserrat">{grade.grade}</td>
+                <td className="py-2 px-4 flex justify-center font-montserrat">
+                  {grade.value}
+                </td>
               </tr>
             ))}
           </tbody>

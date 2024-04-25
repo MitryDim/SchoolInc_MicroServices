@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMutation, gql, useApolloClient } from "@apollo/client";
 import { LOGIN_USER } from "../api/graphql/user-queries";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const client = useApolloClient();
@@ -19,23 +20,6 @@ const Login = () => {
       if (token) {
         // Stockez le token dans le local storage ou un cookie
         localStorage.setItem("token", token);
-
-        console.log(data.login);
-        client.cache.writeQuery({
-          query: gql`
-            query GetUser {
-              user {
-                id
-                firstname
-                lastname
-              }
-            }
-          `,
-          data: {
-            user: data.login, // Assurez-vous que votre mutation de login renvoie les données de l'utilisateur
-          },
-        });
-        // Redirigez l'utilisateur vers une autre page après connexion
         window.location.href = "/";
       }
     } catch (error) {
@@ -89,6 +73,14 @@ const Login = () => {
             Login
           </button>
         </form>
+        <div className="mt-4 text-center">
+          <p>
+            Vous avez déjà un compte ?{" "}
+            <Link to="/register" className="text-[#673AB7] hover:text-[#855dca]">
+              Connectez-vous
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

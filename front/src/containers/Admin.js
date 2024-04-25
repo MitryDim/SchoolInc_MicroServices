@@ -15,11 +15,8 @@ import {
 import { useUser } from "../context/userContext";
 
 const Admin = () => {
+  const { user } = useUser();
 
-  const user = useUser();
-
-  console.log(user);
-  
   const {
     data: usersData,
     loading: usersLoading,
@@ -38,8 +35,6 @@ const Admin = () => {
   });
 
   const users = usersData?.getAllUsers || [];
-
-  console.log("users", users);
 
   const [selectAll, setSelectAll] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -158,7 +153,7 @@ const Admin = () => {
   return (
     <div className="w-full h-full p-8">
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
-        {/* Admin {user.firstname} */}
+        Admin ({user?.firstname})
       </h1>
       <div className="grid grid-cols-2 gap-6 mt-5">
         <div className="bg-white p-6 rounded shadow-md">
