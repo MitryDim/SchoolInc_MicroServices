@@ -7,9 +7,6 @@ import {
   DELETE_GRADE,
 } from "../api/graphql/grade-queries";
 import { useQuery, useMutation } from "@apollo/client";
-
-import { GET_ALL_GRADES_BY_COURSE_ID } from "../api/graphql/grade-queries";
-import { useQuery } from "@apollo/client";
 import Chart from "chart.js/auto";
 
 const computeStats = (grades) => {
@@ -28,23 +25,6 @@ const computeStats = (grades) => {
   return { median, lowestGrade, upperGrade };
 };
 
-const fakeClasses = [
-  {
-    id: 1,
-    name: "Class 1",
-    description: "Description of Class 1",
-    students: ["John", "Alice", "Bob"],
-    imageUrl: "https://source.unsplash.com/random/800x400/?class1",
-  },
-  {
-    id: 2,
-    name: "Class 2",
-    description: "Description of Class 2",
-    students: ["Emma", "Jack", "Sophia"],
-    imageUrl: "https://source.unsplash.com/random/800x400/?class2",
-  },
-];
-
 const Professor = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [stats, setStats] = useState(null);
@@ -60,42 +40,41 @@ const Professor = () => {
     data: gradesData,
     loading: gradesLoading,
     error: gradesError,
-    refetch: refetchGrade
+    refetch: refetchGrade,
   } = useQuery(GET_ALL_GRADES_BY_COURSE_ID, {
     variables: { courseId: selectedItem?.id },
     skip: !selectedItem,
   });
 
+  const [editingGrade, setEditingGrade] = useState(null);
+  const [gradeValue, setGradeValue] = useState(null);
 
-    const [editingGrade, setEditingGrade] = useState(null);
-    const [gradeValue, setGradeValue] = useState(null);
+  const [updateGrade] = useMutation(UPDATE_GRADE);
+  const [deleteGrade] = useMutation(DELETE_GRADE);
 
-    const [updateGrade] = useMutation(UPDATE_GRADE);
-    const [deleteGrade] = useMutation(DELETE_GRADE);
+  const handleEditClick = (grade) => {
+    setEditingGrade(grade);
+    setGradeValue(grade.value);
+  };
 
-    const handleEditClick = (grade) => {
-      setEditingGrade(grade);
-      setGradeValue(grade.value);
-    };
-
-    const handleUpdateClick = async () => {
-      await updateGrade({
-        variables: {
-          id: editingGrade.id,
-          grade: {
-            value: parseInt(gradeValue, 10),
-            courseId: editingGrade.course.id,
-            userId: editingGrade.user?.id,
-          },
+  const handleUpdateClick = async () => {
+    await updateGrade({
+      variables: {
+        id: editingGrade.id,
+        grade: {
+          value: parseInt(gradeValue, 10),
+          courseId: editingGrade.course.id,
+          userId: editingGrade.user?.id,
         },
-      });
-      setEditingGrade(null);
-    };
+      },
+    });
+    setEditingGrade(null);
+  };
 
-    const handleDeleteClick = async (grade) => {
-      await deleteGrade({ variables: { id: grade.id } });
-      refetchGrade();
-    };
+  const handleDeleteClick = async (grade) => {
+    await deleteGrade({ variables: { id: grade.id } });
+    refetchGrade();
+  };
 
   // Check if data is loading or if there's an error
   useEffect(() => {
@@ -111,7 +90,13 @@ const Professor = () => {
   const updateChart = (median, lowestGrade, upperGrade) => {
     const ctx = document.getElementById("gradesChart").getContext("2d");
 
-    const chart = new Chart(ctx, {
+    // Check if a chart instance already exists and destroy it
+    if (window.myChart) {
+      window.myChart.destroy();
+    }
+
+    // Create new chart instance
+    window.myChart = new Chart(ctx, {
       type: "bar",
       data: {
         labels: ["Median", "Lowest Grade", "Upper Grade"],
