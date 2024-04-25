@@ -1,19 +1,19 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_GRADE = gql`
-  mutation CreateGrade {
-    createGrade(
-      grade: {
-        value: 15
-        courseId: "66237918476f89dc895b5aeb"
-        userId: "6622541f5cc63958ab7c565f"
-      }
-    ) {
-      id
-      value
-    }
-  }
-`;
+// export const CREATE_GRADE = gql`
+//   mutation CreateGrade {
+//     createGrade(
+//       grade: {
+//         value: 15
+//         courseId: "66237918476f89dc895b5aeb"
+//         userId: "6622541f5cc63958ab7c565f"
+//       }
+//     ) {
+//       id
+//       value
+//     }
+//   }
+// `;
 
 export const GET_ALL_GRADES_BY_USER = gql`
   query GetAllGradesByUserId($userId: ID!) {
@@ -21,6 +21,31 @@ export const GET_ALL_GRADES_BY_USER = gql`
       id
       value
       course {id, name}
+    }
+  }
+`;
+
+
+export const GET_ALL_GRADES_BY_COURSE_ID = gql`
+  query GetAllGradesByCourseId($courseId: ID!) {
+    getAllGradesByCourseId(courseId: $courseId) {
+      id
+      value
+      course {
+        id
+        name
+        description
+        teacherId
+      }
+      user {
+        id
+        firstname
+        lastname
+        email
+        role
+        speciality
+        classId
+      }
     }
   }
 `;

@@ -6,6 +6,8 @@ import * as PIIcons from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { gql, useApolloClient } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { DELETE_USER } from "../api/graphql/user-queries";
 
 const Navbar = () => {
   const client = useApolloClient();
@@ -47,7 +49,20 @@ const Navbar = () => {
     setUser(userDecoded);
   }, []);
 
-  console.log(isAdmin);
+  const [deleteUser] = useMutation(DELETE_USER);
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteUser({
+        variables: { usersIds: [{ id: user.id }] },
+      });
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Erreur lors de la suppression des utilisateurs:", error);
+    }
+    document.getElementById("deleteUserModal").close();
+  };
 
   return (
     <div className="w-28 h-screen bg-[#673AB7] text-white flex flex-col justify-between">
@@ -114,18 +129,48 @@ const Navbar = () => {
       <div className="mb-5 flex flex-col items-center justify-end">
         {/* Log out button only if token exists */}
         {token && (
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              window.location.href = "/login";
-            }}
-            className="flex items-center text-white py-1 px-1 rounded hover:bg-white hover:text-[#673AB7] transition duration-300 ease-in-out font-montserrat mb-4"
-          >
-            <MDIcons.MdLogout size={20} className="mr-1" />
-            <h4>Log Out</h4>
-          </button>
+          <>
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+              }}
+              className="flex items-center text-white py-1 px-1 rounded hover:bg-white hover:text-[#673AB7] transition duration-300 ease-in-out font-montserrat mb-4"
+            >
+              <MDIcons.MdLogout size={20} className="mr-1" />
+              <h4>Log Out</h4>
+            </button>
+            <button
+              onClick={() => document.getElementById("deleteUserModal").show()}
+              className="text-xs text-red-500 py-1 px-1font-montserrat mb-4"
+            >
+              Delete Account
+            </button>
+          </>
         )}
       </div>
+      <dialog id="deleteUserModal" className="modal">
+        <div className="modal-box">
+          <h3 className=" text-black font-bold text-lg">Delete Confirmation</h3>
+          <p className=" text-slate-600 py-4">
+            Are you sure you want to delete this user?
+          </p>
+          <div className="modal-action">
+            <button
+              className="btn mr-2 border-red-600 text-red-600"
+              onClick={handleConfirmDelete}
+            >
+              Yes, delete
+            </button>
+            <button
+              className="btn mr-2 border-black text-black"
+              onClick={() => document.getElementById("deleteUserModal").close()}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
