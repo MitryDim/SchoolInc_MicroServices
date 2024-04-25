@@ -20,7 +20,7 @@ export const GET_ALL_GRADES_BY_USER = gql`
     getAllGradesByUserId(userId: $userId) {
       id
       value
-      course {id}
+      course {id, name}
     }
   }
 `;

@@ -15,6 +15,7 @@ import Admin from "./Admin";
 import Login from "./Login";
 import Register from "./Register";
 import { jwtDecode } from "jwt-decode";
+import Professor from "./Professor";
 
 function App() {
   const token = localStorage.getItem("token"); // Check for token in local storage
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/grades" element={<Grades />} />
                 <Route path="/classes" element={<Classes />} />
                 <Route path="/tickets" element={<Tickets />} />
+                <Route path="/professor" element={<Professor />} />
                 <Route path="/admin" element={<Admin />} />
               </>
             ) : (

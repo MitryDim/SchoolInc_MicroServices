@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { useUser } from "../context/userContext";
 import { GET_ALL_GRADES_BY_USER } from "../api/graphql/grade-queries";
+import { GET_ALL_COURSES } from "../api/graphql/course-queries";
 
 const Grades = () => {
   const { user } = useUser();
@@ -12,22 +13,17 @@ const Grades = () => {
     variables: { userId: userId },
     skip: !userId,
   });
-    useEffect(() => {
-      if (user) {
-        setUserId(user.id); 
-      }
-    }, [user]);
-
-    useEffect(() => {
-      refetch();
-    }, [userId]);
 
   useEffect(() => {
+    if (user) {
+      setUserId(user.id);
+      refetch();
+    }
+
     if (data && data.getAllGradesByUserId) {
       setGrades(data.getAllGradesByUserId);
     }
-  }, [data]);
-
+  }, [user, data]);
 
   return (
     <div className="w-full h-full p-8">
@@ -48,11 +44,13 @@ const Grades = () => {
             </tr>
           </thead>
           <tbody>
-            {grades.map((grade) => (
+            {grades.map((grade, index) => (
               <tr key={grade.id}>
-                <td className="py-2 px-4 font-montserrat">{grade.course?.id}</td>
-                <td className="py-2 px-4 flex justify-center font-montserrat">
-                  {grade.value}
+                <td className="py-3 px-4 font-montserrat text-center">
+                  {grade.course?.name}
+                </td>
+                <td className="py-3 px-4 font-montserrat text-center">
+                  {grade.value} / 20
                 </td>
               </tr>
             ))}

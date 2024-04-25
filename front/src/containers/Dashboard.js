@@ -91,7 +91,7 @@ const Dashboard = () => {
             </p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded shadow-md">
+        {/* <div className="bg-white p-6 rounded shadow-md">
           <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
           <ul className="divide-y divide-gray-300">
             <li className="py-2">
@@ -107,7 +107,7 @@ const Dashboard = () => {
               <p className="text-sm text-gray-500">3 days ago</p>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
       {/* {isModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">

@@ -8,6 +8,9 @@ const courseResolver = {
     getAllCourses: async () => {
       return await Course.find();
     },
+    getCourseByProfessorId: async (_, { professorId }) => {
+      return await Course.find({ teacherId: professorId });
+    },
   },
   Mutation: {
     createCourse: async (_, { course }) => {
@@ -39,7 +42,7 @@ const courseResolver = {
         return [{ __typename: "User", id: course.teacherId }];
       }
     },
-  }
+  },
 };
 
 module.exports = courseResolver;

@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 import NavbarButton from "../components/NavbarButton";
 import * as MDIcons from "react-icons/md";
 import * as IMIcons from "react-icons/im";
+import * as PIIcons from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { gql, useApolloClient } from "@apollo/client";
+
 const Navbar = () => {
   const client = useApolloClient();
   const token = localStorage.getItem("token"); // Check for token in local storage
   const [user, setUser] = useState(null);
   let userDecoded = null;
   const isAdmin = user?.role?.includes("admin");
+  const isProfessor = user?.role?.includes("professor");
+  const isStudent = user?.role?.includes("student");
 
   try {
     userDecoded = jwtDecode(token);
@@ -62,20 +66,24 @@ const Navbar = () => {
                 Icon={MDIcons.MdSpaceDashboard}
               />
             </div>
-            <div className="mt-5">
-              <NavbarButton
-                Tooltip={"Grades"}
-                To={"grades"}
-                Icon={IMIcons.ImStatsBars}
-              />
-            </div>
-            <div className="mt-5">
-              <NavbarButton
-                Tooltip={"Tickets"}
-                To={"tickets"}
-                Icon={IMIcons.ImTicket}
-              />
-            </div>
+            {isStudent && (
+              <div className="mt-5">
+                <NavbarButton
+                  Tooltip={"Grades"}
+                  To={"grades"}
+                  Icon={IMIcons.ImStatsBars}
+                />
+              </div>
+            )}
+            {isProfessor && (
+              <div className="mt-5">
+                <NavbarButton
+                  Tooltip={"Professor"}
+                  To={"professor"}
+                  Icon={PIIcons.PiChalkboardTeacherBold}
+                />
+              </div>
+            )}
             {isAdmin && (
               <div className="mt-5">
                 <NavbarButton
@@ -85,6 +93,13 @@ const Navbar = () => {
                 />
               </div>
             )}
+            <div className="mt-5">
+              <NavbarButton
+                Tooltip={"Tickets"}
+                To={"tickets"}
+                Icon={IMIcons.ImTicket}
+              />
+            </div>
           </>
         ) : (
           <div className="mt-5">
