@@ -18,6 +18,7 @@ The API needs to be GraphQL compliant and use micro services (not one big monoli
 - **Courses** : This microservice is used for manage Courses.
 - **Grades** : This microservice is used to manage Grades.
 
+![image](https://github.com/MitryDim/SchoolInc_MicroServices/assets/44736220/0e9349bd-3ae7-47db-bf87-09888edb01d7)
 
 
 ## Installation
