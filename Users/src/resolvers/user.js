@@ -199,7 +199,7 @@ const userResolver = {
               throw new Error(`user is in a class, can't delete ${user.id}`);
             try {
               await Users.findByIdAndDelete(id);
-              return { id, status: "deleted" };
+              return `User with id ${id} was deleted`;
             } catch (error) {
               throw new Error(
                 `Failed to delete user with id ${id}: ${error.message}`
@@ -210,7 +210,13 @@ const userResolver = {
           }
         })
       );
-      return deleteUsers;
+
+      // Check if all users were deleted successfully
+      if (deleteUsers.every((msg) => msg.includes("was deleted"))) {
+        return "All users were deleted successfully";
+      } else {
+        return `Error during deletion: ${deleteUsers.join(", ")}`;
+      }
     },
   },
   User: {
