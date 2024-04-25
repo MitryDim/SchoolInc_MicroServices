@@ -66,14 +66,14 @@ describe("User Resolvers", () => {
       variables: {
         firstname: "Admin",
         lastname: "User",
-        email: "admin4@example.com",
+        email: "admin6@example.com",
         role: ["admin"],
         speciality: "d",
         password: "Test123456789*",
     },
     });
 
-    console.log(res)
+    console.log(res?.body?.singleResult?.data);
     assert(res.errors === undefined);
     assert(res.data.createUser.role.includes("admin"));
     adminToken = res.data.createUser.token;

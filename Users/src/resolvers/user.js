@@ -2,7 +2,7 @@ const Users = require("../database/models/user");
 const utils = require("../utils");
 const userResolver = {
   Query: {
-    getUserById: async (_, { id }) => {
+    getUserById: async (_, { id }, { userAuth }) => {
       if (!userAuth) throw new Error("You are not authenticated");
       if (id) {
         if (!userAuth.isAdmin && !userAuth.isProfessor && userAuth.id !== id)
