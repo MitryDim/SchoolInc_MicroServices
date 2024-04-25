@@ -218,6 +218,30 @@ const userResolver = {
         return `Error during deletion: ${deleteUsers.join(", ")}`;
       }
     },
+    removeUserFromClass: async (_, { userId }, { userAuth }) => {
+      if (!userAuth) throw new Error("You are not authenticated");
+      // Check if the user is authorized
+      if (
+        !userAuth.isAdmin &&
+        !userAuth.isProfessor &&
+        userAuth.id !== userId
+      ) {
+        throw new Error("Unauthorized");
+      }
+      const user = await Users.findById(userId);
+      if (!user) {
+        throw new Error(`User with id ${userId} not found`);
+      }
+      if (!user.classId) {
+        throw new Error(`User with id ${userId} is not in a class`);
+      }
+      const updatedUser = await Users.findByIdAndUpdate(
+        userId,
+        { classId: null },
+        { new: true }
+      );
+      return updatedUser;
+    },
   },
   User: {
     Class(user) {
