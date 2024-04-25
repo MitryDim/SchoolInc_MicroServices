@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/userContext";
 import { GET_COURSES_BY_TEACHER_ID } from "../api/graphql/course-queries";
+import {
+  GET_ALL_GRADES_BY_COURSE_ID,
+  UPDATE_GRADE,
+  DELETE_GRADE,
+} from "../api/graphql/grade-queries";
+import { useQuery, useMutation } from "@apollo/client";
+
 import { GET_ALL_GRADES_BY_COURSE_ID } from "../api/graphql/grade-queries";
 import { useQuery } from "@apollo/client";
 import Chart from "chart.js/auto";
@@ -53,11 +60,44 @@ const Professor = () => {
     data: gradesData,
     loading: gradesLoading,
     error: gradesError,
+    refetch: refetchGrade
   } = useQuery(GET_ALL_GRADES_BY_COURSE_ID, {
     variables: { courseId: selectedItem?.id },
     skip: !selectedItem,
   });
 
+
+    const [editingGrade, setEditingGrade] = useState(null);
+    const [gradeValue, setGradeValue] = useState(null);
+
+    const [updateGrade] = useMutation(UPDATE_GRADE);
+    const [deleteGrade] = useMutation(DELETE_GRADE);
+
+    const handleEditClick = (grade) => {
+      setEditingGrade(grade);
+      setGradeValue(grade.value);
+    };
+
+    const handleUpdateClick = async () => {
+      await updateGrade({
+        variables: {
+          id: editingGrade.id,
+          grade: {
+            value: parseInt(gradeValue, 10),
+            courseId: editingGrade.course.id,
+            userId: editingGrade.user?.id,
+          },
+        },
+      });
+      setEditingGrade(null);
+    };
+
+    const handleDeleteClick = async (grade) => {
+      await deleteGrade({ variables: { id: grade.id } });
+      refetchGrade();
+    };
+
+  // Check if data is loading or if there's an error
   useEffect(() => {
     if (gradesData) {
       const { median, lowestGrade, upperGrade } = computeStats(
@@ -163,7 +203,29 @@ const Professor = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="text-[#673AB7]">{grade.value}</td>
+                    <td className="text-[#673AB7]">
+                      {editingGrade === grade ? (
+                        <input
+                          type="number"
+                          value={gradeValue}
+                          onChange={(e) => setGradeValue(e.target.value)}
+                        />
+                      ) : (
+                        grade.value
+                      )}
+                    </td>
+                    <td>
+                      {editingGrade === grade ? (
+                        <button onClick={handleUpdateClick}>Valider</button>
+                      ) : (
+                        <button onClick={() => handleEditClick(grade)}>
+                          Modifier
+                        </button>
+                      )}
+                      <button onClick={() => handleDeleteClick(grade)}>
+                        Supprimer
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
