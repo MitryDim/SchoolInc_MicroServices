@@ -93,18 +93,7 @@ const gradeResolver = {
         return dataSources.gradeAPI.getGradeByCourseId(reference.courseId);
       }
     },
-  },
-  grades: {
-    __resolveReference: (reference, { dataSources }) => {
-      console.log("reference", dataSources);
-      if (reference.userId) {
-        return dataSources.gradeAPI.getGradeByUserId(reference.userId);
-      }
-      if (reference.courseId) {
-        return dataSources.gradeAPI.getGradeByCourseId(reference.courseId);
-      }
-    },
-  },
+  }
 };
 
 module.exports = gradeResolver;
