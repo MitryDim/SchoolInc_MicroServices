@@ -40,7 +40,6 @@ const Professor = () => {
     const [deleteGrade] = useMutation(DELETE_GRADE);
 
     const handleEditClick = (grade) => {
-      console.log(grade)
       setEditingGrade(grade);
       setGradeValue(grade.value);
     };
