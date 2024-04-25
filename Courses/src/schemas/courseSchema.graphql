@@ -17,7 +17,7 @@ type Course @key(fields: "id") {
 
 type Query {
   getCourse(id: ID!): Course
-  getCourseByTeacherId(teacherId: ID!): [Course]
+  getCoursesByTeacherId(teacherId: ID!): [Course]
   getAllCourses: [Course]
 }
 
