@@ -16,10 +16,11 @@ export const CREATE_GRADE = gql`
 `;
 
 export const GET_ALL_GRADES_BY_USER = gql`
-  query GetAllGradesByUser($userId: ID!) {
-    getAllGradesByUser(userId: $userId) {
+  query GetAllGradesByUserId($userId: ID!) {
+    getAllGradesByUserId(userId: $userId) {
       id
       value
+      course {id}
     }
   }
 `;
