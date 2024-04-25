@@ -1,8 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../context/userContext";
 import { GET_COURSES_BY_TEACHER_ID } from "../api/graphql/course-queries";
 import { GET_ALL_GRADES_BY_COURSE_ID } from "../api/graphql/grade-queries";
 import { useQuery } from "@apollo/client";
+import Chart from "chart.js/auto";
+
+const computeStats = (grades) => {
+  const sortedGrades = grades.map((grade) => grade.value).sort((a, b) => a - b);
+
+  const median =
+    sortedGrades.length % 2 === 0
+      ? (sortedGrades[sortedGrades.length / 2 - 1] +
+          sortedGrades[sortedGrades.length / 2]) /
+        2
+      : sortedGrades[Math.floor(sortedGrades.length / 2)];
+
+  const lowestGrade = sortedGrades[0];
+  const upperGrade = sortedGrades[sortedGrades.length - 1];
+
+  return { median, lowestGrade, upperGrade };
+};
 
 const fakeClasses = [
   {
@@ -22,8 +39,8 @@ const fakeClasses = [
 ];
 
 const Professor = () => {
-  // State to manage the selected class/course and its students
   const [selectedItem, setSelectedItem] = useState(null);
+  const [stats, setStats] = useState(null);
 
   const { user } = useUser();
 
@@ -31,8 +48,6 @@ const Professor = () => {
     variables: { teacherId: user.id },
     skip: !user,
   });
-
-  console.log(selectedItem?.id);
 
   const {
     data: gradesData,
@@ -43,13 +58,54 @@ const Professor = () => {
     skip: !selectedItem,
   });
 
-  console.log(gradesData, gradesLoading, gradesError);
+  useEffect(() => {
+    if (gradesData) {
+      const { median, lowestGrade, upperGrade } = computeStats(
+        gradesData.getAllGradesByCourseId
+      );
+      setStats({ median, lowestGrade, upperGrade });
+      updateChart(median, lowestGrade, upperGrade);
+    }
+  }, [gradesData]);
 
-  // Check if data is loading or if there's an error
+  const updateChart = (median, lowestGrade, upperGrade) => {
+    const ctx = document.getElementById("gradesChart").getContext("2d");
+
+    const chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Median", "Lowest Grade", "Upper Grade"],
+        datasets: [
+          {
+            label: "Statistics",
+            data: [median, lowestGrade, upperGrade],
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Extract courses and classes from the data
   const courses = data.getCoursesByTeacherId;
 
   return (
@@ -57,34 +113,6 @@ const Professor = () => {
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
         Professor Panel
       </h1>
-      {/* Display classes as cards */}
-      <div className="bg-white p-6 rounded shadow-md mt-5">
-        <h2 className="text-xl font-semibold mb-4">Your Classes</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {fakeClasses.map((classe) => (
-            <div
-              key={classe.id}
-              className="bg-white rounded-lg overflow-hidden shadow-md transform transition duration-300 ease-in-out hover:scale-105 cursor-pointer"
-              onClick={() => setSelectedItem(classe)}
-            >
-              <img
-                src={classe.imageUrl}
-                alt={classe.name}
-                className="w-full h-40 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg text-center font-semibold text-gray-800 mb-2">
-                  {classe.name}
-                </h3>
-                <p className="text-sm text-center text-gray-600">
-                  {classe.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Display courses as cards */}
       <div className="bg-white p-6 rounded shadow-md mt-5">
         <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -111,7 +139,6 @@ const Professor = () => {
           ))}
         </div>
       </div>
-      {/* Display students for the selected class/course */}
       {selectedItem && (
         <div className="bg-white p-6 rounded shadow-md mt-5">
           <h2 className="text-xl font-semibold mb-4">
@@ -131,7 +158,8 @@ const Professor = () => {
                     <td>
                       <div className="flex items-center gap-3">
                         <div className="font-bold text-[#673AB7]">
-                          {grade.user.firstname} {grade.user.lastname}
+                          {grade.user &&
+                            `${grade.user.firstname} ${grade.user.lastname}`}
                         </div>
                       </div>
                     </td>
@@ -141,6 +169,7 @@ const Professor = () => {
               </tbody>
             </table>
           )}
+          <canvas id="gradesChart" width="400" height="200"></canvas>
         </div>
       )}
     </div>
