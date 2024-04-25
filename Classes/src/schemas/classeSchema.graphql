@@ -3,11 +3,12 @@
 input ClassInput {
   name: String
   description: String
-  coursesId: [ID!]
+  coursesId: [ID]
 }
 
 extend type Course @key(fields: "id") {
   id: ID @external
+  name: String @external
 }
 
 
@@ -27,4 +28,5 @@ type Query {
 type Mutation {
   createClass(class: ClassInput): Class
   updateClass(id: ID!, class: ClassInput): Class
+  addCourseToClass(classId: ID!, courseId: [ID!]): Class
 }
