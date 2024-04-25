@@ -47,6 +47,7 @@ type Query {
 }
 
 type Mutation {
+  addToClass(userId: ID!, classId: ID!) : User
   createUser(user: UserInput): LoginResponse
   createUsers(users: [UserInput]): String
   login(email: String!, password: String!): LoginResponse

@@ -19,12 +19,11 @@ const courseResolver = {
     },
   },
   Course: {
-   async  __resolveReference(object) {
-      console.log(object);
-      return  await Course.findById(object.id);
+    async __resolveReference(object) {
+      return await Course.findById(object.id);
     },
     Class(course) {
-        console.log('test')
+      console.log("test", course);
       return {
         __typename: "Class",
         id: course.classId,
@@ -40,7 +39,7 @@ const courseResolver = {
         return [{ __typename: "User", id: course.teacherId }];
       }
     },
-  },
+  }
 };
 
 module.exports = courseResolver;

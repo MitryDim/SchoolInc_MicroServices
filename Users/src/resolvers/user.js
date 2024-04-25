@@ -3,15 +3,41 @@ const utils = require("../utils");
 const userResolver = {
   Query: {
     getUserById: async (_, { id }) => {
+      if (!userAuth) throw new Error("You are not authenticated");
+      if (id) {
+        if (!userAuth.isAdmin && !userAuth.isProfessor && userAuth.id !== id)
+          throw new Error("Unauthorized");
+      } else id = userAuth.id;
+
       return await Users.findById(id);
     },
-    searchByName: async ({ name }) => {
-      return await Users.findOne({ name: name });
+
+    searchByName: async (_, { name }, { userAuth }) => {
+      if (!userAuth) throw new Error("You are not authenticated");
+
+      const user = await Users.find({ firstname: name });
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (
+        !userAuth.isAdmin &&
+        !userAuth.isProfessor &&
+        userAuth.id !== user.id
+      ) {
+        throw new Error("Unauthorized");
+      }
+
+      return user;
     },
-    getAllUsers: async (_, args, context) => {
-      // if (!context.userIsAuthorized) {
-      //   throw new Error("Unauthorized");
-      // }
+    getAllUsers: async (_, args, { userAuth }) => {
+      if (!userAuth) {
+        throw new Error("You are not authenticated");
+      }
+      console.log("userAuth", userAuth);
+      if (!userAuth.isAdmin && !userAuth.isProfessor) {
+        throw new Error("Unauthorized");
+      }
 
       const { firstname, lastname, email, age, limit = 10, skip = 0 } = args;
 
@@ -34,6 +60,26 @@ const userResolver = {
     },
   },
   Mutation: {
+    addToClass: async (_, { userId, classId }, { userAuth }) => {
+      if (!userAuth) throw new Error("You are not authenticated");
+      // Check if the user is authorized
+      if (
+        !userAuth.isAdmin &&
+        !userAuth.isProfessor &&
+        userAuth.id !== userId
+      ) {
+        throw new Error("Unauthorized");
+      }
+      const user = await Users.findByIdAndUpdate(
+        userId,
+        { classId: classId },
+        { new: true }
+      );
+      if (!user) {
+        throw new Error(`User with id ${userId} not found`);
+      }
+      return user;
+    },
     login: async (_, { email, password }) => {
       // Trouver l'utilisateur par email
       const user = await Users.findOne({ email });
@@ -110,7 +156,7 @@ const userResolver = {
 
       const { id, user } = args;
 
-      if(!isAdmin && !isProfessor && id !== userAuth.id) {
+      if (!userAuth.isAdmin && !userAuth.isProfessor && id !== userAuth.id) {
         throw new Error("Unauthorized");
       }
 
@@ -135,26 +181,40 @@ const userResolver = {
       return result;
     },
     deleteUser: async (_, { usersIds }, { userAuth }) => {
+      if (!userAuth) throw new Error("you are not authenticated");
       // Check if the user is authorized
-      if (!userAuth.isAdmin) {
+      if (
+        !userAuth.isAdmin &&
+        !userAuth.isProfessor &&
+        userAuth.id !== usersIds[0]
+      ) {
         throw new Error("Unauthorized");
       }
-      const updatedUsers = await Promise.all(
-        usersIds.map(({ id }) =>
-          Users.findByIdAndUpdate(id, { enable: false }, { new: true })
-        )
+      const deleteUsers = await Promise.all(
+        usersIds.map(async ({ id }) => {
+          const user = await Users.findById(id);
+          if (user) {
+            if (user.classId)
+              throw new Error(`user is in a class, can't delete ${user.id}`);
+            try {
+              await Users.findByIdAndDelete(id);
+              return { id, status: "deleted" };
+            } catch (error) {
+              throw new Error(
+                `Failed to delete user with id ${id}: ${error.message}`
+              );
+            }
+          } else {
+            throw new Error(`User with id ${id} not found`);
+          }
+        })
       );
-
-      // Check if all users were updated successfully
-      if (updatedUsers.every((user) => user)) {
-        return "Users updated successfully";
-      } else {
-        throw new Error("Failed to update one or more users");
-      }
+      return deleteUsers;
     },
   },
   User: {
     Class(user) {
+      console.log("Class");
       if (!user.classId) return null;
       return { __typename: "Classes", id: user.classId };
     },

@@ -20,7 +20,7 @@ async function StartServer() {
     context: async ({ req }) => {
       const token = req.headers.authorization || "";
       const user = await ValidateSignature(token);
-
+      console.log("user", user)
       const userAuth = {
         ...user,
         isAdmin: user?.role?.includes("admin"),
