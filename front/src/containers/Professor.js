@@ -1,25 +1,13 @@
 import React, { useState } from "react";
 import { useUser } from "../context/userContext";
 import { GET_COURSES_BY_TEACHER_ID } from "../api/graphql/course-queries";
-import { GET_ALL_GRADES_BY_COURSE_ID } from "../api/graphql/grade-queries";
-import { useQuery } from "@apollo/client";
+import {
+  GET_ALL_GRADES_BY_COURSE_ID,
+  UPDATE_GRADE,
+  DELETE_GRADE,
+} from "../api/graphql/grade-queries";
+import { useQuery, useMutation } from "@apollo/client";
 
-const fakeClasses = [
-  {
-    id: 1,
-    name: "Class 1",
-    description: "Description of Class 1",
-    students: ["John", "Alice", "Bob"],
-    imageUrl: "https://source.unsplash.com/random/800x400/?class1",
-  },
-  {
-    id: 2,
-    name: "Class 2",
-    description: "Description of Class 2",
-    students: ["Emma", "Jack", "Sophia"],
-    imageUrl: "https://source.unsplash.com/random/800x400/?class2",
-  },
-];
 
 const Professor = () => {
   // State to manage the selected class/course and its students
@@ -32,18 +20,49 @@ const Professor = () => {
     skip: !user,
   });
 
-  console.log(selectedItem?.id);
+
 
   const {
     data: gradesData,
     loading: gradesLoading,
     error: gradesError,
+    refetch: refetchGrade
   } = useQuery(GET_ALL_GRADES_BY_COURSE_ID, {
     variables: { courseId: selectedItem?.id },
     skip: !selectedItem,
   });
 
-  console.log(gradesData, gradesLoading, gradesError);
+
+    const [editingGrade, setEditingGrade] = useState(null);
+    const [gradeValue, setGradeValue] = useState(null);
+
+    const [updateGrade] = useMutation(UPDATE_GRADE);
+    const [deleteGrade] = useMutation(DELETE_GRADE);
+
+    const handleEditClick = (grade) => {
+      console.log(grade)
+      setEditingGrade(grade);
+      setGradeValue(grade.value);
+    };
+
+    const handleUpdateClick = async () => {
+      await updateGrade({
+        variables: {
+          id: editingGrade.id,
+          grade: {
+            value: parseInt(gradeValue, 10),
+            courseId: editingGrade.course.id,
+            userId: editingGrade.user?.id,
+          },
+        },
+      });
+      setEditingGrade(null);
+    };
+
+    const handleDeleteClick = async (grade) => {
+      await deleteGrade({ variables: { id: grade.id } });
+      refetchGrade();
+    };
 
   // Check if data is loading or if there's an error
   if (loading) return <p>Loading...</p>;
@@ -57,33 +76,6 @@ const Professor = () => {
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
         Professor Panel
       </h1>
-      {/* Display classes as cards */}
-      <div className="bg-white p-6 rounded shadow-md mt-5">
-        <h2 className="text-xl font-semibold mb-4">Your Classes</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {fakeClasses.map((classe) => (
-            <div
-              key={classe.id}
-              className="bg-white rounded-lg overflow-hidden shadow-md transform transition duration-300 ease-in-out hover:scale-105 cursor-pointer"
-              onClick={() => setSelectedItem(classe)}
-            >
-              <img
-                src={classe.imageUrl}
-                alt={classe.name}
-                className="w-full h-40 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg text-center font-semibold text-gray-800 mb-2">
-                  {classe.name}
-                </h3>
-                <p className="text-sm text-center text-gray-600">
-                  {classe.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
       {/* Display courses as cards */}
       <div className="bg-white p-6 rounded shadow-md mt-5">
         <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
@@ -135,7 +127,29 @@ const Professor = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="text-[#673AB7]">{grade.value}</td>
+                    <td className="text-[#673AB7]">
+                      {editingGrade === grade ? (
+                        <input
+                          type="number"
+                          value={gradeValue}
+                          onChange={(e) => setGradeValue(e.target.value)}
+                        />
+                      ) : (
+                        grade.value
+                      )}
+                    </td>
+                    <td>
+                      {editingGrade === grade ? (
+                        <button onClick={handleUpdateClick}>Valider</button>
+                      ) : (
+                        <button onClick={() => handleEditClick(grade)}>
+                          Modifier
+                        </button>
+                      )}
+                      <button onClick={() => handleDeleteClick(grade)}>
+                        Supprimer
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
