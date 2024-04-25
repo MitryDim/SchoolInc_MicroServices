@@ -187,7 +187,7 @@ const userResolver = {
       if (
         !userAuth.isAdmin &&
         !userAuth.isProfessor &&
-        userAuth.id !== usersIds[0]
+        userAuth.id !== usersIds[0]?.id
       ) {
         throw new Error("Unauthorized");
       }

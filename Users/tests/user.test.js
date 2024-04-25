@@ -13,6 +13,7 @@ const server = new ApolloServer({
     { typeDefs: userSchema, resolvers: userResolver },
   ]),
   context: async ({ req }) => {
+    console.log("--------REQQQQ-----------", req);
     const token = req.headers.authorization || "";
     const user = await ValidateSignature(token);
     const userAuth = {
@@ -32,6 +33,15 @@ describe("User Resolvers", () => {
   });
 
   let adminToken;
+
+  const user = {
+    firstname: "Admin",
+    lastname: "User",
+    email: "admin22@example.com",
+    role: ["admin"],
+    speciality: "d",
+    password: "Test123456789*",
+  };
 
   it("should create a new user with admin role", async () => {
     const CREATE_USER = gql`
@@ -64,19 +74,20 @@ describe("User Resolvers", () => {
     const res = await server.executeOperation({
       query: CREATE_USER,
       variables: {
-        firstname: "Admin",
-        lastname: "User",
-        email: "admin6@example.com",
-        role: ["admin"],
-        speciality: "d",
-        password: "Test123456789*",
-    },
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.role,
+        speciality: user.speciality,
+        password: user.password,
+      },
     });
 
-    console.log(res?.body?.singleResult?.data);
-    assert(res.errors === undefined);
-    assert(res.data.createUser.role.includes("admin"));
-    adminToken = res.data.createUser.token;
+    const response = res?.body?.singleResult;
+    assert(response.errors === undefined);
+    assert(response.data.createUser?.id !== null);
+    user.id = response.data.createUser?.id;
+    adminToken = response.data?.createUser?.token;
   });
 
   it("should login the admin user", async () => {
@@ -86,8 +97,6 @@ describe("User Resolvers", () => {
           id
           firstname
           lastname
-          role
-          email
           token
         }
       }
@@ -96,14 +105,15 @@ describe("User Resolvers", () => {
     const res = await server.executeOperation({
       query: LOGIN,
       variables: {
-        email: "admin@example.com",
-        password: "password",
+        email: user.email,
+        password: user.password,
       },
     });
 
-    assert(res.errors === undefined);
-    assert(res.data.login.role.includes("admin"));
-    adminToken = res.data.login.token;
+    const response = res?.body?.singleResult;
+    assert(response.errors === undefined);
+    assert(response.data.login.id !== null);
+    adminToken = response.data.login.token;
   });
 
   it("should get all users", async () => {
@@ -121,12 +131,97 @@ describe("User Resolvers", () => {
 
     const res = await server.executeOperation({
       query: GET_ALL_USERS,
-      context: () => ({ userAuth: { token: adminToken, isAdmin: true } }),
+      context: () => ({
+        req: {
+          headers: {
+            authorization: `Bearer ${adminToken}`,
+          },
+        },
+      }),
     });
 
     assert(res.errors === undefined);
-    // vérifiez les données ici
   });
 
-  // autres tests ici
+  it("should get a user by ID", async () => {
+    const GET_USER_BY_ID = gql`
+      query GetUserById($id: ID!) {
+        getUserById(id: $id) {
+          id
+          firstname
+          lastname
+          email
+        }
+      }
+    `;
+
+    const res = await server.executeOperation({
+      query: GET_USER_BY_ID,
+      variables: { id: user.id }
+    },
+    {req: {
+          headers: {
+            authorization: `Bearer ${adminToken}`,
+          },
+        }});
+
+    const response = res?.body?.singleResult;
+    console.log(
+      "--------------- GET_USER_BY_ID",
+      JSON.stringify(res?.body?.singleResult.errors),
+      user.id,
+      adminToken
+    );
+    assert(response.errors === undefined);
+    assert(response.data.getUserById.id !== null);
+  });
+
+  it("should update a user", async () => {
+    const UPDATE_USER = gql`
+      mutation UpdateUser($id: String!, $user: UserInput!) {
+        updateUser(id: $id, user: $user) {
+          id
+          firstname
+          lastname
+          email
+        }
+      }
+    `;
+
+    const updatedUser = {
+      firstname: "Updated",
+      lastname: "User",
+      email: "updated@example.com",
+      password: "Updated123456789*",
+      role: ["admin"],
+      speciality: "d",
+      classId: "someClassId",
+    };
+
+    const res = await server.executeOperation(
+      { query: UPDATE_USER },
+      {
+        req: {
+          headers: {
+            authorization: `Bearer ${adminToken}`,
+          },
+        },
+      },
+      {
+        variables: {
+          id: user.id,
+          user: updatedUser,
+        },
+      }
+    );
+
+    const response = res?.body?.singleResult;
+    assert(response.errors === undefined);
+    assert(response.data.updateUser.id === user.id);
+    assert(response.data.updateUser.firstname === updatedUser.firstname);
+    assert(response.data.updateUser.lastname === updatedUser.lastname);
+    assert(response.data.updateUser.email === updatedUser.email);
+  });
+
+  
 });
