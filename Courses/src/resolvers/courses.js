@@ -8,7 +8,7 @@ const courseResolver = {
     getAllCourses: async () => {
       return await Course.find();
     },
-    getCourseByProfessorId: async (_, { teacherId }) => {
+    getCourseByTeacherId: async (_, { teacherId }) => {
       return await Course.find({ teacherId: { $in: teacherId } });
     },
   },
