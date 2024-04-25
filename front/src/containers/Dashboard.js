@@ -59,6 +59,12 @@ const Dashboard = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+    const [sortOrder, setSortOrder] = useState("asc");
+
+    const handleSortClick = () => {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    };
+
   return (
     <div className="w-full h-full p-8">
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
@@ -117,26 +123,37 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="bg-white p-6 rounded shadow-md mt-5">
-        <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
+          <button onClick={handleSortClick}>
+            Sort {sortOrder === "asc" ? "↑" : "↓"}
+          </button>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {userInfo && userInfo.Class && userInfo.Class.Courses.length > 0 ? (
-            userInfo.Class.Courses.map((course) => (
-              <div
-                key={course.id}
-                className="w-40  border rounded-md overflow-hidden"
-              >
-                <img
-                  src={`https://source.unsplash.com/random/400x250/?${course.name}`}
-                  alt={course.name}
-                  className="w-full h-40 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg text-center">
-                    {course.name}
-                  </h3>
+            [...userInfo.Class.Courses]
+              .sort((a, b) =>
+                sortOrder === "asc"
+                  ? a.name.localeCompare(b.name)
+                  : b.name.localeCompare(a.name)
+              )
+              .map((course) => (
+                <div
+                  key={course.id}
+                  className="w-40 border rounded-md overflow-hidden"
+                >
+                  <img
+                    src={`https://source.unsplash.com/random/400x250/?${course.name}`}
+                    alt={course.name}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="font-semibold text-lg text-center">
+                      {course.name}
+                    </h3>
+                  </div>
                 </div>
-              </div>
-            ))
+              ))
           ) : (
             <p>No courses found</p>
           )}
