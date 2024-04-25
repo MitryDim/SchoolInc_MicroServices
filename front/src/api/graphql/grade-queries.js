@@ -54,3 +54,29 @@ export const GET_ALL_GRADES = gql`
     }
   }
 `;
+
+export const UPDATE_GRADE = gql`
+  mutation UpdateGrade($id: ID!, $grade: GradeInput) {
+    updateGrade(id: $id, grade: $grade) {
+      id
+      value
+      course {
+        id
+        name
+      }
+      user {
+        id
+        firstname
+        lastname
+      }
+    }
+  }
+`;
+
+export const DELETE_GRADE = gql`
+  mutation DeleteGrade($id: ID!) {
+    deleteGrade(id: $id) {
+      id
+    }
+  }
+`;

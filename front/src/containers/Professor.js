@@ -1,6 +1,26 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
+import {GET_COURSES_BY_TEACHER_ID} from "../api/graphql/course-queries";
+import { useUser } from "../context/userContext";
+import { useQuery, gql } from "@apollo/client";
 
 const Professor = () => {
+  const [user, setUser] = useState(null);
+  const userContext = useUser();
+
+
+  useEffect(() => {
+    if (userContext?.user) {
+      setUser(userContext.user);
+    }
+  }, [userContext?.user]); // Ajoutez userContext.user comme dépendance
+
+  console.log(user)
+    const { loading, error, data } = useQuery(GET_COURSES_BY_TEACHER_ID, {
+    variables: { teacherId: user?.id },
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
   return (
     <div className="w-full h-full p-8">
       <h1 className="text-3xl font-semibold text-[#673AB7] font-montserrat mt-8">
@@ -22,18 +42,16 @@ const Professor = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="py-3 px-4 font-montserrat text-center">
-                  Course 1
-                </td>
-                <td className="py-3 px-4 font-montserrat text-center">123</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-4 font-montserrat text-center">
-                  Course 2
-                </td>
-                <td className="py-3 px-4 font-montserrat text-center">456</td>
-              </tr>
+              {data.getCoursesByTeacherId.map(({ id, name, description }) => (
+                <tr key={id}>
+                  <td className="py-3 px-4 font-montserrat text-center">
+                    {name}
+                  </td>
+                  <td className="py-3 px-4 font-montserrat text-center">
+                    {description}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
