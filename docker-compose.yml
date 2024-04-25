@@ -1,0 +1,187 @@
+services:
+  users-db:
+    image: mongo:7.0
+    container_name: users-db
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - users-data-db:/data/db
+    networks:
+      - school
+
+  classes-db:
+    image: mongo:7.0
+    container_name: classes-db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27018:27018
+    volumes:
+      - classes-data-db:/data/db
+    networks:
+      - school
+
+  courses-db:
+    image: mongo:7.0
+    container_name: courses-db
+    restart: always
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - courses-data-db:/data/db
+    networks:
+      - school
+
+  grades-db:
+    image: mongo:7.0
+    container_name: grades-db
+    restart: always
+    ports:
+      - "27020:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - grades-data-db:/data/db
+    networks:
+      - school
+
+
+  users1:
+    image: users
+    build:
+      context: ./Users/.
+    container_name: users1
+    restart: always
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./Users/.env
+    depends_on:
+      - users-db
+    networks:
+      - school
+
+  users2:
+    image: users
+    build:
+      context: ./Users/.
+    container_name: users2
+    restart: always
+    ports:
+      - "4006:4001"
+    env_file:
+      - ./Users/.env
+    depends_on:
+      - users-db
+    networks:
+      - school
+
+  classes1:
+    image: classes
+    build:
+      context: ./Classes/.
+    container_name: classes1
+    restart: always
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./Classes/.env
+    depends_on:
+      - classes-db
+    networks:
+      - school
+
+  classes2:
+    image: classes
+    build:
+      context: ./Classes/.
+    container_name: classes2
+    restart: always
+    ports:
+      - "4007:4002"
+    env_file:
+      - ./Classes/.env
+    depends_on:
+      - classes-db
+    networks:
+      - school
+
+  courses1:
+    image: courses
+    build:
+      context: ./Courses/.
+    container_name: courses1
+    restart: always
+    ports:
+      - "4003:4003"
+    env_file:
+      - ../Courses/.env
+    depends_on:
+      - courses-db
+    networks:
+      - school
+
+  courses2:
+    image: courses
+    build:
+      context: ./Courses/.
+    container_name: courses2
+    restart: always
+    ports:
+      - "4008:4003"
+    env_file:
+      - ../Courses/.env
+    depends_on:
+      - courses-db
+    networks:
+      - school
+
+  grades1:
+    image: grades
+    build:
+      context: ./Grades/.
+    container_name: grades1
+    restart: always
+    ports:
+      - "4004:4004"
+    env_file:
+      - ./Grades/.env
+    depends_on:
+      - grades-db
+    networks:
+      - school
+
+  grades2:
+    image: grades
+    build:
+      context: ./Grades/.
+    container_name: grades2
+    restart: always
+    ports:
+      - "4009:4004"
+    env_file:
+      - ./Grades/.env
+    depends_on:
+      - grades-db
+    networks:
+      - school
+
+
+networks:
+  school:
+
+volumes:
+  users-data-db: {}
+  classes-data-db: {}
+  courses-data-db: {}
+  grades-data-db: {}
