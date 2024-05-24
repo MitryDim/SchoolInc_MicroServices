@@ -59,7 +59,7 @@ To run the tests, use the command `npm run test` in the folder of the microservi
 - **users1**: A microservice for managing user-related operations.
 - **users2**: Another microservice for managing user-related operations. 
 - **classes1**: A microservice for managing classes-related operations. 
-- **classes12**: Another microservice for managing classes-related operations. 
+- **classes2**: Another microservice for managing classes-related operations. 
 - **courses1**: A microservice for managing courses-related operations.
 - **courses2**: Another microservice for managing courses-related operations.
 - **grades1**: A microservice for managing grades operations.
